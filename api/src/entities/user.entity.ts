@@ -23,7 +23,7 @@ export class User {
     @CreateDateColumn({ name: 'created_at', type: 'timestamp'})
     createdAt: Date;
 
-    @UpdateDateColumn({ name: "update_at", type: 'timestamp' })
+    @UpdateDateColumn({ name: "updated_at", type: 'timestamp' })
     updatedAt: Date;
 
     @ManyToMany(() => Role)
