@@ -2,9 +2,8 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 
 @Entity('tbl_roles')
 export class Role {
-    @PrimaryGeneratedColumn('uuid')
-    @Column({ name: 'role_id' })
-    id: number;
+    @PrimaryGeneratedColumn('uuid', { name: 'role_id'})
+    id: string;
 
     @Column({ name: 'role_name', nullable: false, type: 'varchar', length: 20 })
     name: string;

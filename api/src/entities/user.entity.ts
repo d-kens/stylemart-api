@@ -2,10 +2,10 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, Pr
 import { Role } from "./role.entity";
 
 
+
 @Entity('tbl_users')
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    @Column({ name: 'user_id' })
+    @PrimaryGeneratedColumn('uuid', { name: 'user_id'})
     id: string;
 
     @Column({ name: 'first_name', type: 'varchar', length: 50 })
@@ -29,4 +29,8 @@ export class User {
     @ManyToMany(() => Role)
     @JoinTable()
     roles: Role[]
+
+    constructor(user: Partial<User>) {
+        Object.assign(this, user);
+    }
 }
