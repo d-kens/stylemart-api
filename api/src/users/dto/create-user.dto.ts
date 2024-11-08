@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 
-export class CreateUSerDto {
+export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     firstName: string;
@@ -18,8 +18,4 @@ export class CreateUSerDto {
     @IsString()
     @IsNotEmpty()
     password: string;
-
-    get fullName(): string {
-        return `${this.firstName} ${this.lastName}`;
-    }
 }

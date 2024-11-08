@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUSerDto } from 'src/users/dto/create-user.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -8,8 +8,7 @@ export class AuthService {
         private usersService: UsersService
     ) {}
 
-
-    async register(userData: CreateUSerDto) {
-        this.usersService.create(userData)
+    register(userData: CreateUserDto) {
+        return this.usersService.create(userData)
     }
 }

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserReponseDto } from './dto/user-response.dto';
-import { CreateUSerDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -43,15 +43,15 @@ export class UsersService {
     }
 
 
-    async create(createUserDto: CreateUSerDto): Promise<UserReponseDto> {
-        const user = await this.findUserByEmail(createUserDto.email);
+    async create(createUserDto: CreateUserDto): Promise<UserReponseDto> {
+        // const user = await this.findUserByEmail(createUserDto.email);
 
-        if(user) throw new ConflictException('User already exists');
+        // if(user) throw new ConflictException('User already exists');
 
         try {
-
             const user = new User({
                 ...createUserDto,
+                fullName: `${createUserDto.firstName} ${createUserDto.lastName}`,
                 passwordHash: await hash(createUserDto.password, 10)
             });
 
@@ -60,7 +60,7 @@ export class UsersService {
             return new UserReponseDto(savedUser);
 
         } catch (error) {
-            throw new InternalServerErrorException('Failed to create user')
+            throw new InternalServerErrorException('Failed to created user');
         }
     }
 

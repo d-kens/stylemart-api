@@ -1,3 +1,4 @@
+import { RoleEnum } from "src/enums/role.enum";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tbl_users')
@@ -13,6 +14,13 @@ export class User {
 
     @Column({ name: 'password_hash', nullable: false, type: 'varchar', length: 255 })
     passwordHash: string;
+
+    @Column({
+        type: 'enum',
+        enum: RoleEnum,
+        default: RoleEnum.USER
+    })
+    role: RoleEnum
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamp'})
     createdAt: Date;
