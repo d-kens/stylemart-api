@@ -1,5 +1,5 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { RoleEnum } from "src/enums/role.enum";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+
 
 export class CreateUSerDto {
     @IsString()
@@ -19,7 +19,7 @@ export class CreateUSerDto {
     @IsNotEmpty()
     password: string;
 
-    @IsEnum(RoleEnum)
-    @IsOptional()
-    role?: RoleEnum;
+    get fullName(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
 }

@@ -1,6 +1,5 @@
 import { User } from "src/entities/user.entity";
 
-
 export class UserReponseDto {
     id: string;
     firstName: string;
@@ -13,10 +12,9 @@ export class UserReponseDto {
 
     constructor(user: User) {
         this.id = user.id;
-        this.firstName = user.firstName;
-        this.lastName = user.lastName;
+        this.firstName = user.fullName.split(" ")[0];
+        this.lastName = user.fullName.split(" ")[1];
         this.email = user.email;
-        this.roles = user.roles.map(role => role.name);
         this.createdAt = user.createdAt;
         this.updatedAt = user.updatedAt;
     }
