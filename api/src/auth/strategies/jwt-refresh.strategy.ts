@@ -17,7 +17,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
             ]),
             ignoreExpiration: false,
             secretOrKey: process.env.JWT_REFRESH_TOKEN_SECRET,
-            passReqToCallback: true,
+            passReqToCallback: true, // pass the incoming http request to the callback function
         });
     }
 
