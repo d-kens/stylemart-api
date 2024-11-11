@@ -4,18 +4,22 @@ import { RoleEnum } from "../../enums/role.enum";
 export class UpdateUserDto {
     @IsString()
     @IsOptional()
-    firstName: string;
+    firstName?: string;
 
     @IsString()
     @IsOptional()
-    lastName: string;
+    lastName?: string;
 
     @IsString()
     @IsOptional()
     @IsEmail()
-    email: string;
+    email?: string;
 
     @IsEnum(RoleEnum)
     @IsOptional()
     role?: RoleEnum;
+
+    @IsString()
+    @IsOptional()
+    refreshToken?: string;
 }
