@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Category } from 'src/entities/category.entity';
+import { User } from 'src/entities/user.entity';
 
 @Module({
     imports: [
@@ -14,10 +16,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
                 database: configService.getOrThrow('DATASOURCE_DATABASE'),
                 synchronize: configService.getOrThrow('MYSQL_SYNCHRONIZE'),
                 autoLoadEntities: true,
+                entities: [User, Category],
                 migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-                cli: {
-                    migrationsDir: __dirname + '/migrations/',
-                }
             }),
             inject: [ConfigService]
         })

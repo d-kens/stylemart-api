@@ -10,21 +10,19 @@ export class Category {
     name: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
-    description: string;
+    description?: string | null;
 
-    @ManyToOne(() => Category, (category) => category.subcategories, { nullable: true})
-    @JoinColumn({ name: "parentCategoryId" })
-    parentCategory: Category
-
-    @OneToMany(() => Category, (category) => category.parentCategory)
-    subcategories: Category[]
-
-    @Column({ name: "parent_category_id", nullable: true })
-    parentCategoryId: number;
+    @ManyToOne(() => Category, { nullable: true })
+    @JoinColumn({ name: 'parent_cat_id' })
+    parentCategory?: Category | null;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamp'})
     createdAt: Date;
 
     @UpdateDateColumn({ name: "updated_at", type: 'timestamp' })
     updatedAt: Date;
+
+    constructor(category: Partial<Category>)  {
+        Object.assign(this, category);
+    }
 }
