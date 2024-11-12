@@ -19,7 +19,6 @@ export class UsersController {
     findAll(
         @CurrentUser() user: User,
     ): Promise<UserReponseDto[]> {
-        console.log(user)
         return this.usersService.findAll();
     }
 }
