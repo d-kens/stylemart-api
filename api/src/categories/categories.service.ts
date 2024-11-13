@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { CategoryResponseDto } from './dto/category-response.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
@@ -14,12 +13,16 @@ export class CategoriesService {
     ) {}
 
     async findAllCategories(): Promise<Category[]> {
-        return await this.categoriesRepository.find();
+        return await this.categoriesRepository.find({
+            relations: ['parentCategory'],
+        });
+        
     }
 
     async findCategoryById(categoryId: string): Promise<Category> {
         const category = await this.categoriesRepository.findOne({
-            where: { id: categoryId }
+            where: { id: categoryId },
+            relations: ['parentCategory'],
         });
 
         if(!category) throw new NotFoundException(`Category with id: ${categoryId} not found`);
@@ -52,7 +55,6 @@ export class CategoriesService {
     }
 
     async updateCategory(categoryId: string, updateCategoryData: UpdateCategoryDto): Promise<Category> {
-        // check if category exists
         const existingCategory = await this.findCategoryById(categoryId);
 
         const { 
@@ -61,12 +63,10 @@ export class CategoriesService {
             parentCategoryId
         } = updateCategoryData;
 
-        // Prevent the category from being its own parent
         if (parentCategoryId && parentCategoryId === categoryId) {
             throw new BadRequestException("A category cannot be its own parent.");
         }
 
-        // check if parent category exists if supplied 
         let parentCategory = null;
         if (parentCategoryId) {
             parentCategory = await this.findCategoryById(updateCategoryData.parentCategoryId);

@@ -15,13 +15,11 @@ export class UsersService {
     ){}
 
 
-    async findAll(): Promise<UserReponseDto[]> {
-        const users =  await this.usersRepository.find();
-
-        return users.map(user => new UserReponseDto(user));
+    async findAll(): Promise<User[]> {
+        return await this.usersRepository.find();
     }
 
-    async findById(id: string): Promise<UserReponseDto> {
+    async findById(id: string): Promise<User> {
         const user = await this.usersRepository.findOne({
             where: { id }
         });
@@ -30,7 +28,7 @@ export class UsersService {
             throw new NotFoundException('User not found');
         }
 
-        return new UserReponseDto(user);
+        return user;
     }
 
 
@@ -43,7 +41,7 @@ export class UsersService {
     }
 
 
-    async create(createUserDto: CreateUserDto): Promise<UserReponseDto> {
+    async create(createUserDto: CreateUserDto): Promise<User> {
         const user = await this.findUserByEmail(createUserDto.email);
 
         if(user) throw new ConflictException('User already exists');
@@ -55,23 +53,19 @@ export class UsersService {
                 passwordHash: await hash(createUserDto.password, 10)
             });
 
-            const savedUser =  await this.usersRepository.save(user);
-
-            return new UserReponseDto(savedUser);
+            return await this.usersRepository.save(user);
 
         } catch (error) {
             throw new InternalServerErrorException('Failed to created user');
         }
     }
 
-    async update(id: string, updateUserDto: UpdateUserDto): Promise<UserReponseDto> {
+    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
         const existingUser = await this.findById(id);
 
         try {
             const updatedUser = Object.assign(existingUser, updateUserDto);
-            const result = await this.usersRepository.save(updatedUser);
-
-            return new UserReponseDto(result)
+            return await this.usersRepository.save(updatedUser);
 
         } catch (error) {
             throw new InternalServerErrorException('Failed to update user');

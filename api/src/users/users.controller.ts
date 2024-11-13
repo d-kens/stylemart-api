@@ -16,9 +16,10 @@ export class UsersController {
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     @Get()
-    findAll(
+    async findAll(
         @CurrentUser() user: User,
     ): Promise<UserReponseDto[]> {
-        return this.usersService.findAll();
+        const users = await this.usersService.findAll();
+        return users.map(user => new UserReponseDto(user));
     }
 }

@@ -21,6 +21,7 @@ export class CategoriesController {
     })
     async findAll(): Promise<CategoryResponseDto[]> {
         const categories = await this.categoriesService.findAllCategories();
+        console.log(categories)
         return categories.map((category) => new CategoryResponseDto(category));
     }
 
