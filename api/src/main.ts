@@ -19,11 +19,6 @@ async function bootstrap() {
     .setTitle('Stylemart API')
     .setDescription('The Stylemart API allows users to interact with an online fashion store, offering features like browsing products, managing orders, and user authentication.')
     .setVersion('1.0')
-    .addTag('Products')
-    .addTag('Orders') 
-    .addTag('Users')
-    .addTag('Payments')
-    .addTag('Cart')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

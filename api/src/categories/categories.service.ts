@@ -13,24 +13,22 @@ export class CategoriesService {
         private categoriesRepository: Repository<Category>
     ) {}
 
-    async findAllCategroies(): Promise<CategoryResponseDto[]> {
-        const categories = await this.categoriesRepository.find();
-
-        return categories.map((category) => new CategoryResponseDto(category))
+    async findAllCategories(): Promise<Category[]> {
+        return await this.categoriesRepository.find();
     }
 
-    async findCategoryById(categoryId: string): Promise<CategoryResponseDto> {
+    async findCategoryById(categoryId: string): Promise<Category> {
         const category = await this.categoriesRepository.findOne({
             where: { id: categoryId }
         });
 
         if(!category) throw new NotFoundException(`Category with id: ${categoryId} not found`);
 
-        return new CategoryResponseDto(category);
+        return category;
     }
 
 
-    async createCategory(newCategoryData: CreateCategoryDto): Promise<CategoryResponseDto> {
+    async createCategory(newCategoryData: CreateCategoryDto): Promise<Category> {
         const { name, description, parentCategoryId } = newCategoryData;
 
         let parentCategory = null;
@@ -46,23 +44,21 @@ export class CategoriesService {
                 parentCategory
             });
     
-            const result =  await this.categoriesRepository.save(newCategory);
-
-            return new CategoryResponseDto(result);
+            return await this.categoriesRepository.save(newCategory);
         
         } catch (error) {
             throw new InternalServerErrorException("Failed to create category. Try again later");
         }
     }
 
-    async updateCategory(categoryId: string, updateCategoryData: UpdateCategoryDto): Promise<CategoryResponseDto> {
+    async updateCategory(categoryId: string, updateCategoryData: UpdateCategoryDto): Promise<Category> {
         // check if category exists
         const existingCategory = await this.findCategoryById(categoryId);
 
         const { 
             name = existingCategory.name, 
             description = existingCategory.description, 
-            parentCategoryId 
+            parentCategoryId
         } = updateCategoryData;
 
         // Prevent the category from being its own parent
@@ -84,9 +80,7 @@ export class CategoriesService {
                 parentCategory
             });
 
-            const result = await this.categoriesRepository.save(updatedCategory);
-
-            return new CategoryResponseDto(result);
+            return await this.categoriesRepository.save(updatedCategory);
 
         } catch (error) {
             throw new InternalServerErrorException('Failed to update category');
@@ -94,7 +88,7 @@ export class CategoriesService {
 
     }
 
-    async deleteCategory(categoryId: string) {
+    async deleteCategory(categoryId: string): Promise<void> {
         const result = await this.categoriesRepository.delete({
             id: categoryId
         });
