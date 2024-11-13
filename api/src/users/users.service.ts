@@ -69,7 +69,9 @@ export class UsersService {
 
         try {
             const updatedUser = Object.assign(existingUser, updateUserDto);
-            return await this.usersRepository.save(updatedUser);
+            const result = await this.usersRepository.save(updatedUser);
+
+            return new UserReponseDto(result)
 
         } catch (error) {
             throw new InternalServerErrorException('Failed to update user');
