@@ -1,11 +1,9 @@
+import { AbstractEntity } from "src/database/abstract.entity";
 import { RoleEnum } from "src/enums/role.enum";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tbl_users')
-export class User {
-    @PrimaryGeneratedColumn('uuid', { name: 'user_id'})
-    id: string;
-
+export class User extends AbstractEntity<User> {
     @Column({ name: 'fullname', type: 'varchar', length: 100 })
     fullName: string
 
@@ -24,15 +22,4 @@ export class User {
         default: RoleEnum.USER
     })
     role: RoleEnum
-
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp'})
-    createdAt: Date;
-
-    @UpdateDateColumn({ name: "updated_at", type: 'timestamp' })
-    updatedAt: Date;
-
-
-    constructor(user: Partial<User>) {
-        Object.assign(this, user);
-    }
 }
