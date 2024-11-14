@@ -4,6 +4,8 @@ import { Category } from 'src/entities/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CategoriesService {
