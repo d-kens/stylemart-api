@@ -4,6 +4,8 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import * as process from 'process';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +16,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }
   ));
+
+  
 
   const config = new DocumentBuilder()
     .setTitle('Stylemart API')
