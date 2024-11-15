@@ -1,13 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { Product } from 'src/entities/product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
-import * as fs from 'fs';
-import * as path from 'path';
-import { diskStorage } from 'multer';
-import { ProductResponseDto } from './dto/product-response.dto';
+import { unlink } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -18,17 +16,39 @@ export class ProductsService {
     ) {}
 
 
-    async createProduct(productData: CreateProductDto, image: Express.Multer.File): Promise<Product> {
-        const category = this.categoryService.findCategoryById(productData.categoryId);
+    private async unlinkFile(filePath: string): Promise<void> {
+        
+    }
 
 
-        const product = new Product(productData)
+    async createProduct(productData: CreateProductDto, image: Express.Multer.File) {
+        const category = await this.categoryService.findCategoryById(productData.categoryId);
 
-        try {
-            return  await this.productsRepository.save(product);
-        } catch (error) {
-            throw new InternalServerErrorException('Failed to create product.')
+        console.log(category)
+
+        if (!category) {
+
+            const filePath = join(process.cwd(), 'uploads/products/', image.filename);
+
+            console.log(filePath)
+
+            console.log('Invalid Category. Unlinking File');
+
+            unlink(filePath, (err) => {
+                if (err) {
+                    console.error(err);
+                }
+            });
+            throw new NotFoundException(`Category with id: ${productData.categoryId} not found`);
         }
+
+        const product = new Product({
+            ...productData,
+            price: Number(productData.price),
+            stock: Number(productData.stock),
+        });
+
+        return product;
     }
 
 }
