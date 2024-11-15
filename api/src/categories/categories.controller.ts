@@ -1,5 +1,5 @@
 import { CategoriesService } from './categories.service';
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryResponseDto } from './dto/category-response.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -34,6 +34,9 @@ export class CategoriesController {
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<CategoryResponseDto> {
         const category = await this.categoriesService.findCategoryById(id);
+
+        if(!category) throw new NotFoundException(`Category with id: ${id} not found`);
+        
         return new CategoryResponseDto(category);
     }
 

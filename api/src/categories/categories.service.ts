@@ -27,8 +27,6 @@ export class CategoriesService {
             relations: ['parentCategory'],
         });
 
-        if(!category) throw new NotFoundException(`Category with id: ${categoryId} not found`);
-
         return category;
     }
 
@@ -58,6 +56,8 @@ export class CategoriesService {
 
     async updateCategory(categoryId: string, updateCategoryData: UpdateCategoryDto): Promise<Category> {
         const existingCategory = await this.findCategoryById(categoryId);
+
+        if(!existingCategory) throw new NotFoundException(`Category with id: ${categoryId} not found`);
 
         const { 
             name = existingCategory.name, 

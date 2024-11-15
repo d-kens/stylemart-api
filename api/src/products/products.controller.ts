@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { response, Response } from 'express';
+import { CreateProductDto } from './dto/create-product.dto';
 
 
 @Controller('products')
@@ -33,8 +34,9 @@ export class ProductsController {
             callback(null, true)
         }
     }))
-    createProduct(@UploadedFile() file: Express.Multer.File) {
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() productData: CreateProductDto) {
         console.log(file)
+        const result = await this.productsService.createProduct(productData, file)
     }
 
     @Get('image/:filename')

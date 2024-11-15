@@ -10,12 +10,12 @@ export class CreateProductDto {
     description?: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    price: number
+    @IsString()
+    price: string
 
     @IsNotEmpty()
-    @IsNumber()
-    stock: number;
+    @IsString()
+    stock: string;
 
     @IsNotEmpty()
     @IsString()
