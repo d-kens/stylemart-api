@@ -7,6 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { unlink } from 'fs';
 import { join } from 'path';
 import * as process from 'process';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -51,9 +52,27 @@ export class ProductsService {
         }
     }
 
-    /**
-     * TODO: Implement product update operation
-     */
+    async updateProduct(productId: string, productData: UpdateProductDto, image: Express.Multer.File): Promise<Product> {
+        const existingProduct =  await this.getProductById(productId);
+
+        if(!existingProduct) {
+            await this.unlinkFile(`${process.env.BASE_URL}/products/image/${image.filename}`);
+            throw new NotFoundException(`Product with id: ${productId} not found`);
+        }
+
+        if(image) {
+            await this.unlinkFile(existingProduct.imageUrl);
+            productData.imageUrl = `${process.env.BASE_URL}/products/image/${image.filename}`;
+        }
+
+        try {
+            Object.assign(existingProduct, productData);
+            return await this.productsRepository.save(existingProduct);
+
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to update product')
+        }
+    }
 
     async deleteProduct(productId: string): Promise<void> {
 
@@ -66,7 +85,7 @@ export class ProductsService {
         try {
             await this.unlinkFile(product.imageUrl)
 
-            await this.productsRepository.delete(product);
+            await this.productsRepository.delete(productId);
 
         } catch (error) {
             throw new InternalServerErrorException('Failed to delete product')
