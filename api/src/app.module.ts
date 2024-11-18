@@ -6,13 +6,14 @@ import { DatabaseModule } from './database/database.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { CartsModule } from './carts/carts.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true}),
     DatabaseModule,
     AuthModule, 
-    UsersModule, CategoriesModule, ProductsModule,
+    UsersModule, CategoriesModule, ProductsModule, CartsModule,
   ],
 })
 export class AppModule {}

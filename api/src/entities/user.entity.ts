@@ -1,6 +1,6 @@
 import { AbstractEntity } from "src/database/abstract.entity";
 import { RoleEnum } from "src/enums/role.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity} from "typeorm";
 
 @Entity('tbl_users')
 export class User extends AbstractEntity<User> {
