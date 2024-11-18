@@ -1,11 +1,15 @@
 import { CategoriesService } from './categories.service';
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryResponseDto } from './dto/category-response.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleEnum } from 'src/enums/role.enum';
 
-@ApiTags('categories')
+@ApiTags('category endpoints')
 @ApiResponse({ status: 500, description: 'Internal server error.' })
 @Controller('categories')
 export class CategoriesController {
@@ -25,13 +29,13 @@ export class CategoriesController {
         return categories.map((category) => new CategoryResponseDto(category));
     }
 
+    @Get(':id')
     @ApiOperation({ summary: 'Retrieve a single category'})
     @ApiOkResponse({
         description: 'Category retrieved successfully',
         type: CategoryResponseDto
     })
     @ApiNotFoundResponse({ description: 'Category not found',})
-    @Get(':id')
     async findOne(@Param('id') id: string): Promise<CategoryResponseDto> {
         const category = await this.categoriesService.findCategoryById(id);
 
@@ -40,6 +44,9 @@ export class CategoriesController {
         return new CategoryResponseDto(category);
     }
 
+    @Roles(RoleEnum.ADMIN)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Post()
     @ApiOperation({ summary: 'Create category'})
     @ApiCreatedResponse({ 
@@ -54,6 +61,10 @@ export class CategoriesController {
         return new CategoryResponseDto(createdCategory);
     }
 
+    @Roles(RoleEnum.ADMIN)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @Put(':id')
     @ApiOperation({ summary: 'Update Category'})
     @ApiCreatedResponse({ 
         description: 'Category has been successfully updated.',
@@ -61,17 +72,19 @@ export class CategoriesController {
     })
     @ApiForbiddenResponse({ description: 'Forbidden.'})
     @ApiNotFoundResponse({ description: 'Category to be updated not found',})
-    @Put(':id')
     async updateCategory(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<CategoryResponseDto> {
         const updatedCategory = await this.categoriesService.updateCategory(id, updateCategoryDto);
         return new CategoryResponseDto(updatedCategory);
     }
 
+    @Roles(RoleEnum.ADMIN)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
     @ApiOperation({ summary: 'Delete a category' }) 
     @ApiNoContentResponse({ description: 'Category deleted successfully' })
     @ApiForbiddenResponse({ description: 'Forbidden.'})
     @ApiNotFoundResponse({ description: 'Category to be deleted not found',})
-    @Delete(':id')
     async deleteCategory(@Param('id') id: string): Promise<void> {
         return this.categoriesService.deleteCategory(id);
     }
