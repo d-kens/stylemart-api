@@ -25,7 +25,7 @@ export class CartsService {
 
         if(!cart) {
             cart = this.cartsRepository.create({userId, total: 0, cartItems: []});
-            cart = await this.cartsRepository.save(cart);
+            await this.cartsRepository.insert(cart);
         }
 
         return cart;
@@ -34,7 +34,7 @@ export class CartsService {
     /**
      * TODO: Fix this method, Query runners, transactions
      */
-    async addItemToCart(userId: string, cartItemData: CartItemDto): Promise<boolean> {
+    async addItemToCart(userId: string, cartItemData: CartItemDto): Promise<Cart> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -48,35 +48,23 @@ export class CartsService {
             let cartItem = await this.cartItemsRepository.findOne({
                 where: {cartId: cart.id, productId}
             });
-            
-            if (cartItem) {
-                cartItem.quantity += quantity;
-            } else {
-                cartItem = this.cartItemsRepository.create({
-                    cartId: cart.id,
-                    productId,
-                    quantity
-                });
+
+            if (cartItem) { // update cart item with quantity if it already exists
+
+            } else { // create a new cart item it doesn exist
+
             }
 
-            await queryRunner.manager.save(cartItem);
+            // Load cart items 
 
-            const cartItems = await queryRunner.manager.find(CartItem, {
-                where: { cartId: cart.id },
-                relations: ['product']
-            })
+            // Calclate Cart Total
 
-            cart.total = cartItems.reduce(
-                (sum, item) => sum + item.quantity * item.product.price,
-                0
-            );
+            // Update Cart with total
 
-            await queryRunner.manager.save(cart);
+            // commit all transaction
 
-
-            await queryRunner.commitTransaction();
-
-            return true
+            // return updated cart
+ 
         } catch (err) {
             await queryRunner.rollbackTransaction();
             console.error(err)
