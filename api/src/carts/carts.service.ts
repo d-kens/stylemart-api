@@ -31,6 +31,9 @@ export class CartsService {
         return cart;
     }
 
+    /**
+     * TODO: Fix this method, Query runners, transactions
+     */
     async addItemToCart(userId: string, cartItemData: CartItemDto): Promise<boolean> {
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
