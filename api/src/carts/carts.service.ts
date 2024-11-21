@@ -50,8 +50,12 @@ export class CartsService {
             });
 
             if (cartItem) { // update cart item with quantity if it already exists
-
-            } else { // create a new cart item it doesn exist
+                await queryRunner.manager.update(
+                    CartItem, 
+                    { cartId: cartItem.cartId, productId: cartItem.productId },  
+                    { quantity: cartItem.quantity + quantity }
+                )
+            } else { 
 
             }
 
