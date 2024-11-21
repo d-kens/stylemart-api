@@ -4,10 +4,13 @@ import { Product } from "./product.entity";
 
 @Entity('tbl_cart_items')
 export class CartItem {
-    @PrimaryColumn({ name: "cart_id" })
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @Column({ name: "cart_id" })
     cartId: string;
 
-    @PrimaryColumn({ name: "product_id" })
+    @Column({ name: "product_id" })
     productId: string;
 
     @Column()
