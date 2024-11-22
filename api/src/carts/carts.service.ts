@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartItem } from 'src/entities/cart-item.entity';
 import { Cart } from 'src/entities/cart.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { CartItemDto } from './dto/cart-item.dto';
 import { DataSource } from 'typeorm';
 
@@ -46,47 +46,70 @@ export class CartsService {
             let cartItem = await this.cartItemsRepository.findOne({
                 where: { cartId: cart.id, productId },
             });
+
+            
     
             if (cartItem) {
+                console.log(cartItem)
                 await queryRunner.manager.update(
                     CartItem,
                     { id: cartItem.id },
                     { quantity: cartItem.quantity + quantity }
                 );
             } else {
+                console.log(cartItem)
+                console.log(cart.id)
                 cartItem = queryRunner.manager.create(CartItem, {
                     cartId: cart.id,
                     productId,
                     quantity,
                 });
+                console.log(cartItem)
                 await queryRunner.manager.insert(CartItem, cartItem);
             }
-    
-            const cartItems = await queryRunner.manager.find(CartItem, {
-                where: { cartId: cart.id },
-                relations: ['product'], 
-            });
-    
-            let cartTotal = 0;
-            for (const item of cartItems) {
-                if (item.product) {
-                    cartTotal += item.product.price * item.quantity;
-                }
-            }
-    
-            cart.total = cartTotal;
-            await queryRunner.manager.update(Cart, cart.id, { total: cartTotal });
+
+            cart.total = await this.calculateCartTotal(cart, queryRunner);
+            
+            await queryRunner.manager.save(cart);
     
             await queryRunner.commitTransaction();
-    
+
             return cart;
     
         } catch (err) {
             await queryRunner.rollbackTransaction();
+            console.log(err)
             throw new InternalServerErrorException('Failed to add item to cart');
         } finally {
             await queryRunner.release();
         }
     }
-    
+
+    private async calculateCartTotal(cart: Cart, queryRunner: QueryRunner): Promise<number> {
+        const cartItems = await queryRunner.manager.find(CartItem, {
+            where: { cartId: cart.id },
+            relations: ['product'], 
+        });
+
+        let cartTotal = 0;
+        for (const item of cartItems) {
+            if (item.product) {
+                cartTotal += item.product.price * item.quantity;
+            }
+        }
+
+        return cartTotal;
+    } 
+
+
+    async removeCartItem() {
+
+    }
+
+    async clearCart(cartId: string) {
+        // searh the cart by Id 
+
+        // remove the items from the cart
+
+    }
  }
