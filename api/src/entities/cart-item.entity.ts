@@ -7,17 +7,11 @@ export class CartItem {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: "cart_id" })
-    cartId: string;
-
-    @Column({ name: "product_id" })
-    productId: string;
-
     @Column()
     quantity: number;
 
     @ManyToOne(() => Cart, (cart) => cart.cartItems)
-    @JoinColumn({ name: "cartId"})
+    @JoinColumn({ name: "cart_id"})
     cart: Cart;
 
     @OneToOne(() => Product)

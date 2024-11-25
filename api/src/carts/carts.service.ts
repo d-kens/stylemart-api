@@ -22,7 +22,7 @@ export class CartsService {
 
         let cart = await this.cartsRepository.findOne({
             where: { userId },
-            relations: ['cartItems', 'cartItems.product'],
+            relations: ['cartItems', 'cartItems.product'], // TODO: Investigate why the relation is not being pulled
         })
 
         if(!cart) {
@@ -43,9 +43,14 @@ export class CartsService {
     
             let cart = await this.getCart(userId);
     
+            
+
             let cartItem = await this.cartItemsRepository.findOne({
-                where: { cartId: cart.id, productId },
-            });
+                where: { 
+                    cart: { id: cart.id},
+                    product: { id: productId }
+                }
+            })
 
             
     
@@ -87,7 +92,7 @@ export class CartsService {
 
     private async calculateCartTotal(cart: Cart, queryRunner: QueryRunner): Promise<number> {
         const cartItems = await queryRunner.manager.find(CartItem, {
-            where: { cartId: cart.id },
+            where: { cart: { id: cart.id } },
             relations: ['product'], 
         });
 
