@@ -6,10 +6,6 @@ import { CartItem } from "./cart-item.entity";
 
 @Entity('tbl_carts')
 export class Cart extends AbstractEntity<Cart> {
-
-    @Column({ name: "user_id"})
-    userId: string;
-
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false, default: 0 })
     total: number;
 

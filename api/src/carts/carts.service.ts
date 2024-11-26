@@ -18,103 +18,12 @@ export class CartsService {
         private readonly dataSource: DataSource,
     ) {}
 
-    async getCart(userId: string): Promise<Cart> {
-
-        let cart = await this.cartsRepository.findOne({
-            where: { userId },
-            relations: ['cartItems', 'cartItems.product'], // TODO: Investigate why the relation is not being pulled
-        })
-
-        if(!cart) {
-            cart = this.cartsRepository.create({userId, total: 0, cartItems: []});
-            await this.cartsRepository.insert(cart);
-        }
-
-        return cart;
-    }
-    
-    async addItemToCart(userId: string, cartItemData: CartItemDto): Promise<Cart> {
-        const queryRunner = this.dataSource.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-    
-        try {
-            const { productId, quantity } = cartItemData;
-    
-            let cart = await this.getCart(userId);
-    
-            
-
-            let cartItem = await this.cartItemsRepository.findOne({
-                where: { 
-                    cart: { id: cart.id},
-                    product: { id: productId }
-                }
-            })
-
-            
-    
-            if (cartItem) {
-                console.log(cartItem)
-                await queryRunner.manager.update(
-                    CartItem,
-                    { id: cartItem.id },
-                    { quantity: cartItem.quantity + quantity }
-                );
-            } else {
-                console.log(cartItem)
-                console.log(cart.id)
-                cartItem = queryRunner.manager.create(CartItem, {
-                    cartId: cart.id,
-                    productId,
-                    quantity,
-                });
-                console.log(cartItem)
-                await queryRunner.manager.insert(CartItem, cartItem);
-            }
-
-            cart.total = await this.calculateCartTotal(cart, queryRunner);
-            
-            await queryRunner.manager.save(cart);
-    
-            await queryRunner.commitTransaction();
-
-            return cart;
-    
-        } catch (err) {
-            await queryRunner.rollbackTransaction();
-            console.log(err)
-            throw new InternalServerErrorException('Failed to add item to cart');
-        } finally {
-            await queryRunner.release();
-        }
-    }
-
-    private async calculateCartTotal(cart: Cart, queryRunner: QueryRunner): Promise<number> {
-        const cartItems = await queryRunner.manager.find(CartItem, {
-            where: { cart: { id: cart.id } },
-            relations: ['product'], 
-        });
-
-        let cartTotal = 0;
-        for (const item of cartItems) {
-            if (item.product) {
-                cartTotal += item.product.price * item.quantity;
-            }
-        }
-
-        return cartTotal;
-    } 
-
-
-    async removeCartItem() {
-
-    }
-
-    async clearCart(cartId: string) {
-        // searh the cart by Id 
-
-        // remove the items from the cart
-
-    }
- }
+    /**
+     * TODO: Imlelement:
+            - Add item to cart
+            - Remove Item from cart
+            - Update item quantity
+            - Get cart by user ID   
+            - Clear user cart
+     */
+}
