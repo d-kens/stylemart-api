@@ -18,12 +18,23 @@ export class CartsService {
         private readonly dataSource: DataSource,
     ) {}
 
-    /**
-     * TODO: Imlelement:
-            - Add item to cart
-            - Remove Item from cart
-            - Update item quantity
-            - Get cart by user ID   
-            - Clear user cart
-     */
+    async getUserCart(userId: string) {
+
+    }
+
+    async addItemToCart(userId: string, cartItemData: CartItemDto) {
+
+    }
+
+    async removeItemFromCart(userId: string, cartItemData) {
+
+    }
+
+    async updateCartItemQuantity(userId: string, cartItemId: string, quantity: number) {
+
+    } 
+
+    async clearCart(userId: string) {
+
+    }
 }
