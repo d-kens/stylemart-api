@@ -13,6 +13,6 @@ export class Cart extends AbstractEntity<Cart> {
     @JoinColumn({ name: "user_id" })
     user: User;
 
-    @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+    @OneToMany(() => CartItem, (cartItem) => cartItem.cart, { eager: true })
     cartItems: CartItem[];
 }
