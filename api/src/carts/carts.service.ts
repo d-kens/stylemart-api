@@ -18,8 +18,28 @@ export class CartsService {
         private readonly dataSource: DataSource,
     ) {}
 
-    async getUserCart(userId: string) {
+    async getCart(userId: string) {
+        try {
 
+            let cart = await this.cartsRepository.findOne({
+                where: { user: { id: userId}}
+            });
+
+            if(!cart) {
+                cart =  this.cartsRepository.create({
+                    total: 0,
+                    user: { id: userId },
+                    cartItems: []
+                });
+
+                await this.cartsRepository.insert(cart);
+            }
+
+            return cart;
+
+        } catch (error) {
+            throw new InternalServerErrorException('Error retrieving user cart');
+        }
     }
 
     async addItemToCart(userId: string, cartItemData: CartItemDto) {
