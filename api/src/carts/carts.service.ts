@@ -43,10 +43,45 @@ export class CartsService {
     }
 
     async addItemToCart(userId: string, cartItemData: CartItemDto) {
+        let cart = await this.getCart(userId);
+
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            let cartItem = await queryRunner.manager.findOne(CartItem, {
+                where: { cart: { id: cart.id }, product: { id: cartItemData.productId } }
+            });
+
+            if(cartItem) {
+                cartItem.quantity += cartItemData.quantity;
+                await queryRunner.manager.update(CartItem, cartItem.id, cartItem)
+            } else {
+                cartItem = this.cartItemsRepository.create({
+                    quantity: cartItemData.quantity,
+                    product: { id: cartItemData.productId },
+                    cart: { id: cart.id },
+                })
+                await queryRunner.manager.insert(CartItem, cartItem)
+            }
+            
+            const cartItems = await queryRunner.manager.find(CartItem, { where: cart });
+            cart.total = await this.calculateCartTotal(cartItems);
+
+            return await queryRunner.manager.save(cart)
+        
+        } catch (error) {
+            console.log(error);
+            await queryRunner.rollbackTransaction();
+            throw new InternalServerErrorException('Failed to add item to cart');
+        } finally {
+            await queryRunner.release();
+        }
 
     }
 
-    async removeItemFromCart(userId: string, cartItemData) {
+    async removeItemFromCart(userId: string, cartItemId: string) {
 
     }
 
@@ -54,7 +89,26 @@ export class CartsService {
 
     } 
 
-    async clearCart(userId: string) {
+    async clearCart(userId: string): Promise<Cart> {
+        let cart = await this.getCart(userId);
+        try {
+            cart.cartItems = [];
+            cart.total = 0;
+            return this.cartsRepository.save(cart)
+        } catch (error) {
+            console.log(error)
+            throw new InternalServerErrorException('Failed to clear cart')
+        }
+    }
 
+    private async calculateCartTotal(cartItems: CartItem[]): Promise<number> {
+        let cartTotal = 0;
+
+        for(let i = 0; i < cartItems.length; i++) {
+            cartTotal += cartItems[i].quantity * cartItems[i].product.price
+        }
+
+        console.log("This is the cart total for the calculate cart total function: ", cartTotal)
+        return cartTotal;
     }
 }
