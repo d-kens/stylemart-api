@@ -86,7 +86,29 @@ export class CartsService {
     }
 
     async updateCartItemQuantity(userId: string, cartItemId: string, quantity: number) {
+        let cart = await this.getCart(userId);
 
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            let cartItem = await queryRunner.manager.findOne(CartItem, { where: { id: cartItemId } });
+            cartItem.quantity += quantity;
+            await queryRunner.manager.update(CartItem, cartItemId, cartItem);
+
+            const cartItems = await queryRunner.manager.find(CartItem, { where: cart });
+            cart.total = await this.calculateCartTotal(cartItems);
+
+            return await queryRunner.manager.save(cart)
+ 
+        } catch (error) {
+            console.log(error);
+            await queryRunner.rollbackTransaction();
+            throw new InternalServerErrorException("Failed to update cart quatity");
+        } finally {
+            await queryRunner.release();
+        }
     } 
 
     async clearCart(userId: string): Promise<Cart> {

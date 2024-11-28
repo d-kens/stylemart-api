@@ -22,10 +22,4 @@ export class CartsController {
     async addItemToCart(@CurrentUser() user: User, @Body() cartItemData: CartItemDto) {
         return this.cartsService.addItemToCart(user.id, cartItemData);
     }
-
-    @UseGuards(JwtAuthGuard)
-    @Put()
-    async clearCart(@CurrentUser() user: User) {
-        return this.cartsService.clearCart(user.id)
-    }
 }
