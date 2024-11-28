@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -18,8 +18,14 @@ export class CartsController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('add-item')
+    @Post()
     async addItemToCart(@CurrentUser() user: User, @Body() cartItemData: CartItemDto) {
         return this.cartsService.addItemToCart(user.id, cartItemData);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put()
+    async clearCart(@CurrentUser() user: User) {
+        return this.cartsService.clearCart(user.id)
     }
 }
