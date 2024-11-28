@@ -13,9 +13,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
-/**
- * Specify query parameters
- */
+
 @ApiTags('product endpoints ')
 @ApiResponse({ status: 500, description: 'Internal server error.' })
 @Controller('products')
