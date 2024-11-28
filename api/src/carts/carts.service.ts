@@ -18,7 +18,7 @@ export class CartsService {
         private readonly dataSource: DataSource,
     ) {}
 
-    async getCart(userId: string) {
+    async getCart(userId: string): Promise<Cart> {
         try {
 
             let cart = await this.cartsRepository.findOne({
@@ -42,7 +42,7 @@ export class CartsService {
         }
     }
 
-    async addItemToCart(userId: string, cartItemData: CartItemDto) {
+    async addItemToCart(userId: string, cartItemData: CartItemDto): Promise<Cart> {
         let cart = await this.getCart(userId);
 
         const queryRunner = this.dataSource.createQueryRunner();
@@ -66,10 +66,15 @@ export class CartsService {
                 await queryRunner.manager.insert(CartItem, cartItem)
             }
             
-            const cartItems = await queryRunner.manager.find(CartItem, { where: cart });
-            cart.total = await this.calculateCartTotal(cartItems);
+            const cartItems = await queryRunner.manager.find(CartItem, { where: { cart: { id: cart.id }}});
 
-            return await queryRunner.manager.save(cart)
+            cart.total = await this.calculateCartTotal(cartItems);
+            cart.cartItems = cartItems;
+
+            await queryRunner.manager.save(cart)
+            await queryRunner.commitTransaction();
+
+            return cart;
         
         } catch (error) {
             console.log(error);
@@ -81,11 +86,7 @@ export class CartsService {
 
     }
 
-    async removeItemFromCart(userId: string, cartItemId: string) {
-
-    }
-
-    async updateCartItemQuantity(userId: string, cartItemId: string, quantity: number) {
+    async updateCartItemQuantity(userId: string, cartItemId: string, quantity: number): Promise<Cart> {
         let cart = await this.getCart(userId);
 
         const queryRunner = this.dataSource.createQueryRunner();
@@ -97,10 +98,14 @@ export class CartsService {
             cartItem.quantity += quantity;
             await queryRunner.manager.update(CartItem, cartItemId, cartItem);
 
-            const cartItems = await queryRunner.manager.find(CartItem, { where: cart });
+            const cartItems = await queryRunner.manager.find(CartItem, { where: { cart: { id: cart.id }}});
             cart.total = await this.calculateCartTotal(cartItems);
+            cart.cartItems = cartItems
 
-            return await queryRunner.manager.save(cart)
+            await queryRunner.manager.save(cart);
+            await queryRunner.commitTransaction();
+
+            return cart;
  
         } catch (error) {
             console.log(error);
@@ -109,17 +114,64 @@ export class CartsService {
         } finally {
             await queryRunner.release();
         }
-    } 
+    }
 
-    async clearCart(userId: string): Promise<Cart> {
+    async removeItemFromCart(userId: string, cartItemId: string): Promise<Cart> {
+
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
         let cart = await this.getCart(userId);
+
         try {
-            cart.cartItems = [];
+            await queryRunner.manager.delete(CartItem, cartItemId);
+        
+            const cartItems = await queryRunner.manager.find(CartItem, { where: { cart: { id: cart.id }}});
+
+            cart.total = await this.calculateCartTotal(cartItems);
+            cart.cartItems = cartItems;
+
+            await queryRunner.manager.save(cart)
+            await queryRunner.commitTransaction();
+
+            return cart;
+
+        } catch {
+            queryRunner.rollbackTransaction();
+            throw new InternalServerErrorException("Failed to remove item from cart");
+        } finally {
+            queryRunner.release();
+        }
+
+    }
+
+    
+    async clearCart(userId: string): Promise<Cart> {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        let cart = await this.getCart(userId);
+
+        try {
+            await queryRunner.manager.delete(CartItem, { cart: { id: cart.id } });
+
             cart.total = 0;
-            return this.cartsRepository.save(cart)
+            cart.cartItems = []
+
+            await queryRunner.manager.save(cart);
+
+            await queryRunner.commitTransaction();
+            return cart;    
+
         } catch (error) {
-            console.log(error)
+
+            await queryRunner.rollbackTransaction();
             throw new InternalServerErrorException('Failed to clear cart')
+
+        } finally {
+            await queryRunner.release();
         }
     }
 
@@ -129,8 +181,7 @@ export class CartsService {
         for(let i = 0; i < cartItems.length; i++) {
             cartTotal += cartItems[i].quantity * cartItems[i].product.price
         }
-
-        console.log("This is the cart total for the calculate cart total function: ", cartTotal)
+        
         return cartTotal;
     }
 }
