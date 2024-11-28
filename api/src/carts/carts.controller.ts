@@ -4,6 +4,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { CartItemDto } from './dto/cart-item.dto';
+import { CartResponseDto } from './dto/cart-response.dto';
 
 @Controller('carts')
 export class CartsController {
@@ -13,14 +14,16 @@ export class CartsController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getCart(@CurrentUser() user: User) {
-        return await this.cartsService.getCart(user.id)
+    async getCart(@CurrentUser() user: User): Promise<CartResponseDto> {
+        const result =  await this.cartsService.getCart(user.id);
+        return new CartResponseDto(result)
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('items')
-    async addItemToCart(@CurrentUser() user: User, @Body() cartItemData: CartItemDto) {
-        return this.cartsService.addItemToCart(user.id, cartItemData);
+    async addItemToCart(@CurrentUser() user: User, @Body() cartItemData: CartItemDto): Promise<CartResponseDto> {
+        const result =  await this.cartsService.addItemToCart(user.id, cartItemData);
+        return new CartResponseDto(result)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -29,14 +32,16 @@ export class CartsController {
         @CurrentUser() user: User,
         @Param('cartItemId') cartItemId: string,
         @Body('quantity') quantity: number,
-    ) {
-        return this.cartsService.updateCartItemQuantity(user.id, cartItemId, quantity)
+    ) { 
+        const result = await this.cartsService.updateCartItemQuantity(user.id, cartItemId, quantity);
+        return new CartResponseDto(result)
     }
 
     @UseGuards(JwtAuthGuard)
     @Delete('items')
-    async clearCart( @CurrentUser() user: User) {
-        return this.cartsService.clearCart(user.id);
+    async clearCart( @CurrentUser() user: User): Promise<CartResponseDto> {
+        const resutl =  await this.cartsService.clearCart(user.id);
+        return new CartResponseDto(resutl);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -45,7 +50,8 @@ export class CartsController {
         @CurrentUser() user: User,
         @Param('cartItemId') cartItemId: string
     ) {
-        return this.cartsService.removeItemFromCart(user.id, cartItemId)
+        const result = await this.cartsService.removeItemFromCart(user.id, cartItemId);
+        return new CartResponseDto(result);
     }
  
 }
