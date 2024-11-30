@@ -9,7 +9,7 @@ import { ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiOperation,
 
 @ApiTags('cart managemnet endpoints')
 @ApiResponse({ status: 500, description: 'Internal server error.' })
-@Controller('carts')
+@Controller('cart')
 export class CartsController {
     constructor(
         private cartsService: CartsService,

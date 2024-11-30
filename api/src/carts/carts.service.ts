@@ -5,6 +5,7 @@ import { Cart } from 'src/entities/cart.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { CartItemDto } from './dto/cart-item.dto';
 import { DataSource } from 'typeorm';
+import { Product } from 'src/entities/product.entity';
 
 @Injectable()
 export class CartsService {
@@ -18,26 +19,33 @@ export class CartsService {
         private readonly dataSource: DataSource,
     ) {}
 
+
+    private async createCart(userId: string): Promise<Cart> {
+        try {
+            const cart = this.cartsRepository.create({
+                total: 0,
+                user: { id: userId },
+                cartItems: []
+            });
+    
+            return this.cartsRepository.save(cart)
+
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to create cart');
+        }
+    
+    }
+
     async getCart(userId: string): Promise<Cart> {
         try {
-
             let cart = await this.cartsRepository.findOne({
                 where: { user: { id: userId}}
             });
 
-            if(!cart) {
-                cart =  this.cartsRepository.create({
-                    total: 0,
-                    user: { id: userId },
-                    cartItems: []
-                });
-
-                await this.cartsRepository.insert(cart);
-            }
-
-            return cart;
+            return cart || this.createCart(userId);
 
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException('Error retrieving user cart');
         }
     }
