@@ -25,10 +25,6 @@ This is an e-commerce API built with **NestJS**, **TypeORM**, and **MySQL** that
 - Users can create orders and track their status.
 - Admins can view and manage all customer orders.
 
-### 6. **MPESA Payment Integration**
-- Integration with MPESA for processing payments.
-- Supports order payments and payment status tracking.
-
 ## Technologies
 
 - **NestJS**: A Node.js framework for building efficient, reliable, and scalable server-side applications.
