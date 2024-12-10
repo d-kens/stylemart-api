@@ -1,7 +1,0 @@
-services:
-  mysql_db:
-    image: mysql
-    env_file:
-      - .env
-    ports:
-      - "3307:3306"
