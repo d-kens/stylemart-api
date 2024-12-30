@@ -7,6 +7,7 @@ import { OtpModule } from './otp/otp.module';
 import { TokenModule } from './token/token.module';
 import { MailerModule } from './mailer/mailer.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CategoriesModule } from './categories/categories.module';
     TokenModule,
     MailerModule,
     CategoriesModule,
+    ProductsModule,
   ],
 })
 export class AppModule {}
