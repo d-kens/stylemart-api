@@ -21,7 +21,7 @@ import { ChangepasswordDto } from 'src/dtos/change-password.dto';
 import { UserReponseDto } from 'src/dtos/user-reponse.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-@Controller("auth")
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 

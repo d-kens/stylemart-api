@@ -21,6 +21,12 @@ export class CategoriesService {
     return await this.categoriesRepository.find();
   }
 
+  async findOne(categoryId: string): Promise<Category> {
+    return await this.categoriesRepository.findOne({
+      where: { id: categoryId },
+    });
+  }
+
   async create(name: string): Promise<Category> {
     const existingCategory = await this.categoriesRepository.findOne({
       where: { name },

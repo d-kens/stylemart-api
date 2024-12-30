@@ -20,13 +20,13 @@ export class Product {
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   description: string;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ length: 50 })
   brand: string;
 
-  @Column({ type: 'enum', enum: Size, nullable: true })
+  @Column({ type: 'enum', enum: Size })
   size: Size;
 
   @Column({ nullable: true })

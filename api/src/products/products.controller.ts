@@ -10,12 +10,12 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Product } from 'src/entities/product.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateProductDto } from './dtos/create-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -36,11 +36,15 @@ export class ProductsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
-  async create( @UploadedFile() image: Express.Multer.File,) {
-    if (!image) {
+  async create(
+    @UploadedFile() productImage: Express.Multer.File,
+    @Body() productData: CreateProductDto,
+  ) {
+    if (!productImage) {
       throw new HttpException('File is required', HttpStatus.BAD_REQUEST);
     }
-    return await this.productsService.create(image);
+
+    return await this.productsService.create(productImage, productData);
   }
 
   @Get(':id')

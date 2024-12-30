@@ -4,7 +4,7 @@ import * as process from 'process';
 
 @Injectable()
 export class FirebaseProvider {
-  bucketName = process.env.BUCKET_NAME
+  bucketName = process.env.BUCKET_NAME;
 
   private readonly logger = new Logger(FirebaseProvider.name);
   constructor(
