@@ -2,3 +2,4 @@
 .idea
 .env
 .env*api/firebase-service-account.json
+api/firebase-service-account.json
