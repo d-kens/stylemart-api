@@ -13,7 +13,6 @@ async function bootstrap() {
     credentials: true, // Allow credentials
   });
 
-  app.setGlobalPrefix('auth');
 
   await app.startAllMicroservices();
 
