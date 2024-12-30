@@ -8,15 +8,21 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dtos/create-catgeoty.dto';
+import { CreateCategoryDto } from '../dtos/create-catgeoty.dto';
+import { Category } from 'src/entities/category.entity';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
   @Get()
-  async findAll() {
+  async findAll(): Promise<Category[]> {
     return await this.categoriesService.findAll();
+  }
+
+  @Get('id')
+  async findOne(@Param('id') categoryId: string): Promise<Category> {
+    return await this.categoriesService.findOne(categoryId);
   }
 
   @Post()
