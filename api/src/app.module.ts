@@ -10,6 +10,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from 'nestjs-firebase';
 import * as process from 'process';
+import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import * as process from 'process';
     FirebaseModule.forRoot({
       googleApplicationCredential: process.env.FIREBASE_CREDENTIALS,
     }),
+    PaymentGatewayModule,
   ],
 })
 export class AppModule {}
