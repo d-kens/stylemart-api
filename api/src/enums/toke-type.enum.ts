@@ -1,5 +1,0 @@
-export enum TokenType {
-  REFRESH = 'REFRESH',
-  PWD_RESET = 'PWD_RESET',
-  EMAIL_VERIFICATION = 'EMAIL_VERIFICATION',
-}
