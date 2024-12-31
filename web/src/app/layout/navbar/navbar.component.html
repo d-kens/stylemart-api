@@ -12,21 +12,24 @@
       <div class="menu menu-sm sm:menu-lg menu-horizontal px-1 hidden lg:flex">
         <li><a href="/">Home</a></li>
         <li>
-          <details>
+          <details #productsMenu>
             <summary>Products</summary>
             <ul class="z-30">
-              <li><a href="#">All</a></li>
+              <li><a (clickOutside)="closeMenu(productsMenu)" (click)="closeMenu(productsMenu)">All</a></li>
             </ul>
           </details>
         </li>
-        <li>
-          <details>
-            <summary>Admin</summary>
-            <ul class="z-30">
-              <li><a href="#">All</a></li>
-            </ul>
-          </details>
-        </li>
+        @if(currentUser?.role == "ADMIN") {
+          <li>
+            <details #adminMenu >
+              <summary>Admin</summary>
+              <ul class="z-30">
+                <li><a routerLink="admin/categories/list" (clickOutside)="closeMenu(adminMenu)" (click)="closeMenu(adminMenu)">Categories</a></li>
+                <li><a routerLink="admin/products/list" (clickOutside)="closeMenu(adminMenu)" (click)="closeMenu(adminMenu)">Products</a></li>
+              </ul>
+            </details>
+          </li>
+        }
       </div>
     </div>
   
@@ -37,7 +40,7 @@
 
           @if ((isAuthenticated$ | async)) {
             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-500 text-white transition-transform transform hover:scale-105">
-              {{ userInitials }}
+              {{ getInitials() }}
             </div>
           } @else {
             <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>

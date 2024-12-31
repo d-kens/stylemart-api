@@ -15,8 +15,9 @@ import { ToastrService } from 'ngx-toastr';
 export class NavbarComponent implements OnInit {
   isAuthenticated$; 
   isMenuOpen = false;
+  currentUser: User | null = null;
 
-  user: { firstName: string; lastName: string } | null = null; 
+  // user: { firstName: string; lastName: string } | null = null; 
   userInitials: string | null = null;
   
   constructor(private authService: AuthService, private toastr: ToastrService, private router: Router) {
@@ -36,7 +37,8 @@ export class NavbarComponent implements OnInit {
   getUserInfo() {
     this.authService.getAuthenticatedUser().subscribe({
       next: (user: User) => {
-        this.userInitials = this.getInitials(user.firstName, user.lastName);
+        this.currentUser = user;
+        this.getInitials();
       },
       error: (error) => {
         console.error(error);
@@ -44,8 +46,8 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  getInitials(firstName: string, lastName: string): string {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  getInitials(): string {
+    return `${this.currentUser?.firstName.charAt(0)}${this.currentUser?.lastName.charAt(0)}`.toUpperCase();
   }
 
   toggleMenu() {
@@ -71,6 +73,11 @@ export class NavbarComponent implements OnInit {
     if(bodyElement) {
       bodyElement.blur();
     }
+  }
+
+
+  closeMenu(menu: HTMLDetailsElement) {
+    menu.removeAttribute('open')
   }
   
 
