@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
@@ -11,6 +11,7 @@ import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from 'nestjs-firebase';
 import * as process from 'process';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
+import { IpWhitelistMiddleware } from './middlewares/ip-whitelist.middleware';
 
 @Module({
   imports: [
@@ -29,4 +30,8 @@ import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
     PaymentGatewayModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpWhitelistMiddleware).forRoutes('*');
+  }
+}
