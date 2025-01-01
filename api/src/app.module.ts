@@ -28,9 +28,11 @@ import * as path from 'path';
     CategoriesModule,
     ProductsModule,
     FirebaseModule.forRoot({
-      googleApplicationCredential: process.env.FIREBASE_CREDENTIALS,
+      googleApplicationCredential: path.resolve(__dirname, '../../firebase-service-account.json'),
     }),
     PaymentGatewayModule,
   ],
 })
 export class AppModule {}
+
+
