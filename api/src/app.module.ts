@@ -11,10 +11,14 @@ import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from 'nestjs-firebase';
 import * as process from 'process';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
+import * as path from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: path.resolve(__dirname, '../../.env'), // Adjust the path as needed
+    }),
     DatabaseModule,
     UsersModule,
     AuthModule,
