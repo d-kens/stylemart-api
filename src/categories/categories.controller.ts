@@ -25,7 +25,7 @@ export class CategoriesController {
     return await this.categoriesService.findAll();
   }
 
-  @Get('id')
+  @Get(':id')
   async findOne(@Param('id') categoryId: string): Promise<Category> {
     return await this.categoriesService.findOne(categoryId);
   }
