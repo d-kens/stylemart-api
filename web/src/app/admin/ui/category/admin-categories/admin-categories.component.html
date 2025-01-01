@@ -1,0 +1,49 @@
+<div class="w-full flex justify-between items-center">
+
+    <div>
+        <h1 class="text-2xl font-bold">Categories</h1>
+    </div>
+    <button class="btn btn-primary" routerLink="/admin/categories/create">
+        Create Category
+    </button>
+</div>
+<div class="border-t w-full border-solid border-gray-300 mt-3 mb-5"></div>
+@if(!error && categories.length > 0) {
+    <div class="overflow-x-auto border border-gray-300 rounded-md">
+        <table class="table table-lg table-zebra">
+          <thead class="border-gray-300">
+            <tr class="border-gray-300">
+              <th></th>
+              <th>Public Id</th>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="border-0">
+            <tr *ngFor="let category of categories; let i = index" class="border-gray-300">
+              <th>{{ i + 1 }}</th>
+              <td>{{ category.id }}</td>
+              <td>{{ category.name }}</td>
+              <td>
+                <div (click)="deleteCategory(category.id!)" class="btn btn-secondary btn-sm">
+                  Delete
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+} @else if(loading) {
+    <div class="flex w-full justify-center">
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+} @else if(error) {
+    <div class="alert alert-error">
+        <span>Error! Failed to load categories.</span>
+    </div>
+} @else if(categories.length === 0) {
+    <div role="alert" class="alert alert-info">
+        <fa-icon [icon]="['fas', 'circle-exclamation']" size="2x"></fa-icon>
+        <span>No category created yet.</span>
+    </div>
+}

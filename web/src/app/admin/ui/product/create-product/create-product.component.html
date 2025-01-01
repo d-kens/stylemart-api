@@ -1,0 +1,132 @@
+<div class="grid lg:grid-cols-3 grid-cols-1">
+    <div></div>
+    <form id="createProductForm" (ngSubmit)="createProduct()" [formGroup]="createProductForm">
+
+        <h1 class="text-lg font-bold mb-3">Create new product</h1>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Name</span>
+            <input 
+                type="text" 
+                placeholder="Enter product name"
+                class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productName?.invalid && (productName?.dirty || productName?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productName"
+            />
+            <span *ngIf="productName?.invalid && (productName?.dirty || productName?.touched)" class="mt-1 text-sm text-red-500">Product name is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Brand</span>
+            <input 
+                type="text" 
+                placeholder="Type brand here"
+                class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productBrand?.invalid && (productBrand?.dirty || productBrand?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productBrand"
+            />
+            <span *ngIf="productBrand?.invalid && (productBrand?.dirty || productBrand?.touched)" class="mt-1 text-sm text-red-500">Brand is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Color</span>
+            <input 
+                type="color" 
+                class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productColor?.invalid && (productColor?.dirty || productColor?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productColor"
+            />
+            <span *ngIf="productColor?.invalid && (productColor?.dirty || productColor?.touched)" class="mt-1 text-sm text-red-500">Color is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Description</span>
+            <textarea 
+                placeholder="Type description here"
+                class="mt-1 textarea textarea-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productDescription?.invalid && (productDescription?.dirty || productDescription?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productDescription"
+            >
+            </textarea>
+            
+            <span *ngIf="productDescription?.invalid && (productDescription?.dirty || productDescription?.touched)" class="mt-1 text-sm text-red-500">Description required</span>
+        </label>
+
+        
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Price</span>
+            <input 
+                type="number"
+                class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productPrice?.invalid && (productPrice?.dirty || productPrice?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productPrice"
+            />
+            <span *ngIf="productPrice?.invalid && (productPrice?.dirty || productPrice?.touched)" class="mt-1 text-sm text-red-500">Price is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Stock</span>
+            <input 
+                type="number"
+                class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productStock?.invalid && (productStock?.dirty || productStock?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+                formControlName="productStock"
+            />
+            <span *ngIf="productStock?.invalid && (productStock?.dirty || productStock?.touched)" class="mt-1 text-sm text-red-500">Stock is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Size</span>
+            <select 
+                formControlName="productSize"
+                class="mt-1 select select-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productSize?.invalid && (productSize?.dirty || productSize?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+            >
+              <option disabled selected>Select size</option>
+              @for (size of sizes; track size) {
+                <option value="{{size}}">{{ size }}</option>
+              }
+            </select>
+            <span *ngIf="productSize?.invalid && (productSize?.dirty || productSize?.touched)" class="mt-1 text-sm text-red-500">Size is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Category</span>
+            <select 
+                formControlName="productCategoryId"
+                class="mt-1 select select-bordered w-full rounded-md border-gray-300 focus:outline-none
+                {{ productCategoryId?.invalid && (productCategoryId?.dirty || productCategoryId?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+            >
+              <option disabled selected>Select Category</option>
+              @for (category of categories; track category.id) {
+                <option value="{{category.id}}">{{ category.name }}</option>
+              }
+            </select>
+            <span *ngIf="productCategoryId?.invalid && (productCategoryId?.dirty || productCategoryId?.touched)" class="mt-1 text-sm text-red-500">Category is required</span>
+        </label>
+
+        <label class="form-control w-full mb-4">
+            <span class="block text-sm font-medium text-gray-700">Product Image</span>
+            <input 
+              type="file"
+              class="mt-1 input input-bordered w-full rounded-md border-gray-300 focus:outline-none 
+              {{ productImage?.invalid && (productImage?.dirty || productImage?.touched) ? 'border-red-500' : 'border-gray-300' }}" 
+              (change)="onFileSelected($event)" accept="image/*"
+            />
+            <span *ngIf="productImage?.invalid && (productImage?.dirty || productImage?.touched)" 
+              class="mt-1 text-sm text-red-500">Image is required</span>
+          </label>
+
+        <button 
+            [disabled]="loading"
+            type="submit" 
+            class="mt-6 w-full py-3 text-white bg-primary hover:bg-primary-dark rounded-md shadow-lg transition flex items-center justify-center"
+        >
+            <span *ngIf="loading" class="loading loading-spinner mr-2"></span>
+            <span *ngIf="!loading">Create Product</span>
+            <span *ngIf="loading">Creating Product...</span>
+        </button>
+
+    </form>
+    <div></div>
+</div>
