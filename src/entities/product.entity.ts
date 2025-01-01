@@ -32,9 +32,6 @@ export class Product {
   @Column({ nullable: true })
   color: string;
 
-  @Column({ default: false })
-  featured: boolean;
-
   @Column('int', { default: 0 })
   stock: number;
 
