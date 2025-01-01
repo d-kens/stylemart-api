@@ -1,11 +1,11 @@
 export const environment = {
     auth: {
-        baseUrl: 'hhttps://stylemart-api.onrender.com/auth'
+        baseUrl: 'http://localhost:3000/auth'
     },
     categories: {
-        baseUrl: 'hhttps://stylemart-api.onrender.com/categories'
+        baseUrl: 'http://localhost:3000/categories'
     },
     products: {
-        baseUrl: 'hhttps://stylemart-api.onrender.com/products'
+        baseUrl: 'http://localhost:3000/products'
     }
 }
