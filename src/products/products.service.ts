@@ -28,11 +28,16 @@ export class ProductsService {
   ) {}
 
   async findAll(options: IPaginationOptions): Promise<Pagination<Product>> {
-    return paginate<Product>(this.categoriesRepository, options);
+    return paginate<Product>(this.categoriesRepository, options, {
+      relations: ['category'],
+    });
   }
 
   async findOne(id: string): Promise<Product | null> {
-    return await this.categoriesRepository.findOne({ where: { id } });
+    return await this.categoriesRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    });
   }
 
   async create(
