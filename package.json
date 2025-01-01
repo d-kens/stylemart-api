@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
       "dev": "cd web && npm start & cd api && npm run start:dev",
-      "start": "cd api/dist && node main.js",
+      "start": "cd api && npm run start:prod",
       "prebuild": "cd api && npm run build",
       "build": "cd web && npm run build"
     }
