@@ -11,14 +11,10 @@ import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from 'nestjs-firebase';
 import * as process from 'process';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
-import * as path from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: path.resolve(__dirname, '../../.env'), // Adjust the path as needed
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
     UsersModule,
     AuthModule,
@@ -28,11 +24,9 @@ import * as path from 'path';
     CategoriesModule,
     ProductsModule,
     FirebaseModule.forRoot({
-      googleApplicationCredential: path.resolve(__dirname, '../../firebase-service-account.json'),
+      googleApplicationCredential: process.env.FIREBASE_CREDENTIALS,
     }),
     PaymentGatewayModule,
   ],
 })
 export class AppModule {}
-
-
