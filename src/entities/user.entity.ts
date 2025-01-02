@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Token } from './token.entity';
+import { Order } from './order.entity';
 
 @Entity('tbl_users')
 export class User {
@@ -55,4 +56,7 @@ export class User {
 
   @OneToMany(() => Token, (token) => token.user, { cascade: true })
   tokens: Token[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

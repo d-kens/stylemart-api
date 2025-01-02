@@ -27,7 +27,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-
   @Get()
   async findProducts(
     @Query('page') page: number = 1,

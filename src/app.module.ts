@@ -11,6 +11,7 @@ import { ProductsModule } from './products/products.module';
 import { FirebaseModule } from 'nestjs-firebase';
 import * as process from 'process';
 import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PaymentGatewayModule } from './payment-gateway/payment-gateway.module';
       googleApplicationCredential: process.env.FIREBASE_CREDENTIALS,
     }),
     PaymentGatewayModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

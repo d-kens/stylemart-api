@@ -10,5 +10,6 @@ import { CategoriesModule } from 'src/categories/categories.module';
   imports: [TypeOrmModule.forFeature([Product]), CategoriesModule],
   providers: [ProductsService, FirebaseProvider],
   controllers: [ProductsController],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

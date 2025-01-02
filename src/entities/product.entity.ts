@@ -6,8 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
 import { Category } from './category.entity';
+import { OrderItem } from './order-item.entity';
 
 @Entity('tbl_products')
 export class Product {
@@ -40,6 +42,9 @@ export class Product {
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
+
+  @OneToOne(() => OrderItem, (orderItem) => orderItem.product)
+  orderItem: OrderItem;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
