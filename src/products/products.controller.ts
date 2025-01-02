@@ -43,13 +43,13 @@ export class ProductsController {
 
   @Get('related')
   async findRelatedProduct(
-    @Query('categoryId') categoryId: string,
+    @Query('productId') productId: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<Pagination<Product>>{
     limit = limit > 100 ? 100 : limit;
 
-    return this.productsService.findRelatedProduct(categoryId, { page, limit })
+    return this.productsService.findRelatedProduct(productId, { page, limit })
 
   }
 

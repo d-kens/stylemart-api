@@ -34,11 +34,20 @@ export class ProductsService {
   }
 
   async findRelatedProduct(
-    categoryId: string,
+    productId: string,
     options: IPaginationOptions,
   ): Promise<Pagination<Product>> {
+
+    const product = await this.findOne(productId);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+
+
     return paginate<Product>(this.categoriesRepository, options, {
-      where: { category: { id: categoryId } },
+      where: { category: { id: product.category.id } },
       relations: ['category'],
     });
   }
