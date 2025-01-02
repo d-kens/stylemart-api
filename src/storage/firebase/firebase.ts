@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { FirebaseAdmin, InjectFirebaseAdmin } from 'nestjs-firebase';
 import * as process from 'process';
 
@@ -32,9 +32,21 @@ export class FirebaseProvider {
         reject(new Error(`Failed to upload file: ${error.message}`));
       });
 
-      stream.on('finish', () => {
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
-        resolve({ url: publicUrl });
+      stream.on('finish', async () => {
+
+        try {
+          await fileUpload.makePublic();
+          const publicUrl = `https://storage.googleapis.com/${this.bucketName}/${uniqueFileName}`;
+          resolve({ url: publicUrl });
+        } catch (err) {
+          reject(
+            new InternalServerErrorException(
+              'Error fetching file metadata',
+              err.message,
+            ),
+          );
+        }
+        
       });
 
       stream.end(file.buffer);
