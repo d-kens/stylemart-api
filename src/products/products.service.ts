@@ -12,7 +12,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { Product } from 'src/entities/product.entity';
 import { FirebaseProvider } from 'src/storage/firebase/firebase';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { CreateProductDto, UpdateProductDto } from 'src/dtos/product.dto';
 
@@ -37,21 +37,20 @@ export class ProductsService {
     productId: string,
     options: IPaginationOptions,
   ): Promise<Pagination<Product>> {
-
     const product = await this.findOne(productId);
-
+  
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-
-
-
+  
     return paginate<Product>(this.categoriesRepository, options, {
-      where: { category: { id: product.category.id } },
+      where: {
+        category: { id: product.category.id },
+        id: Not(productId), 
+      },
       relations: ['category'],
     });
   }
-
   async findOne(id: string): Promise<Product | null> {
     return await this.categoriesRepository.findOne({
       where: { id },
