@@ -28,11 +28,28 @@ export class ProductsService {
     private readonly categoryService: CategoriesService,
   ) {}
 
-  async findAll(options: IPaginationOptions): Promise<Pagination<Product>> {
-    return paginate<Product>(this.productsRepository, options, {
-      relations: ['category'],
-    });
+  async findProducts(
+    options: IPaginationOptions,
+    categoryId?: string,
+    sizes?: string[],
+  ): Promise<Pagination<Product>> {
+    const queryBuilder = this.productsRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category');
+  
+    if (categoryId) {
+      queryBuilder.where('product.categoryId = :categoryId', { categoryId });
+    }
+  
+    if (sizes && sizes.length > 0) {
+      queryBuilder.andWhere('product.size IN (:...sizes)', { sizes });
+    }
+  
+    queryBuilder.orderBy('product.createdAt', 'DESC');
+  
+    return paginate<Product>(queryBuilder, options);
   }
+  
+  
 
   async findRelatedProduct(
     productId: string,
@@ -52,26 +69,6 @@ export class ProductsService {
       relations: ['category'],
     });
   }
-
-  async filterBySizeAndCategory(
-    categoryId: string,
-    sizes: string[], 
-    options: IPaginationOptions,
-  ): Promise<Pagination<Product>> {
-    
-    const queryBuilder = this.productsRepository.createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category') 
-      .where('product.categoryId = :categoryId', { categoryId });
-  
-    if (sizes && sizes.length > 0) {
-      queryBuilder.andWhere('product.size IN (:...sizes)', { sizes });
-    }
-  
-    queryBuilder.orderBy('product.createdAt', 'DESC'); 
-  
-    return paginate<Product>(queryBuilder, options);
-  }
-  
   
 
 

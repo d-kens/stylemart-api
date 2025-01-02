@@ -27,33 +27,23 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+
   @Get()
-  async findAll(
+  async findProducts(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query('categoryId') categoryId?: string,
+    @Query('size') size?: string,
   ): Promise<Pagination<Product>> {
-    limit = limit > 100 ? 100 : limit;
-
-    return this.productsService.findAll({
-      page,
-      limit,
-    });
-  }
-
-  @Get('filter')
-  async filterProducts(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-    @Query('categoryId') categoryId: string,
-    @Query('size') size: string,
-  ): Promise<Pagination<Product>> {
-
     limit = limit > 100 ? 100 : limit;
 
     const sizes = size ? size.split(',').map(s => s.trim()) : [];
 
-    return this.productsService.filterBySizeAndCategory(categoryId, sizes, { page, limit });
+    return this.productsService.findProducts({ page, limit }, categoryId, sizes,);
   }
+
+
+
 
 
   @Get('related')
