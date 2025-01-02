@@ -40,11 +40,23 @@ export class ProductsController {
     });
   }
 
+
+  @Get('related')
+  async findRelatedProduct(
+    @Query('categoryId') categoryId: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<Pagination<Product>>{
+    limit = limit > 100 ? 100 : limit;
+
+    return this.productsService.findRelatedProduct(categoryId, { page, limit })
+
+  }
+
   @Get(':id')
   async findOne(@Param('id') productId: string): Promise<Product> {
     return await this.productsService.findOne(productId);
   }
-
 
   @Roles(RoleEnum.ADMIN)
   @UseGuards(RolesGuard)
@@ -86,4 +98,5 @@ export class ProductsController {
   async delete(@Param('id') productId: string) {
     return await this.productsService.delete(productId);
   }
+
 }

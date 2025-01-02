@@ -33,6 +33,16 @@ export class ProductsService {
     });
   }
 
+  async findRelatedProduct(
+    categoryId: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Product>> {
+    return paginate<Product>(this.categoriesRepository, options, {
+      where: { category: { id: categoryId } },
+      relations: ['category'],
+    });
+  }
+
   async findOne(id: string): Promise<Product | null> {
     return await this.categoriesRepository.findOne({
       where: { id },
@@ -115,4 +125,6 @@ export class ProductsService {
       );
     }
   }
+
+  
 }
