@@ -40,6 +40,21 @@ export class ProductsController {
     });
   }
 
+  @Get('filter')
+  async filterProducts(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('categoryId') categoryId: string,
+    @Query('size') size: string,
+  ): Promise<Pagination<Product>> {
+
+    limit = limit > 100 ? 100 : limit;
+
+    const sizes = size ? size.split(',').map(s => s.trim()) : [];
+
+    return this.productsService.filterBySizeAndCategory(categoryId, sizes, { page, limit });
+  }
+
 
   @Get('related')
   async findRelatedProduct(

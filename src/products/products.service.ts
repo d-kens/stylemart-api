@@ -15,6 +15,7 @@ import { FirebaseProvider } from 'src/storage/firebase/firebase';
 import { Not, Repository } from 'typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { CreateProductDto, UpdateProductDto } from 'src/dtos/product.dto';
+import { Size } from 'src/enums/size.enum';
 
 @Injectable()
 export class ProductsService {
@@ -22,13 +23,13 @@ export class ProductsService {
 
   constructor(
     @InjectRepository(Product)
-    private categoriesRepository: Repository<Product>,
+    private productsRepository: Repository<Product>,
     private readonly firebaseStorageProvider: FirebaseProvider,
     private readonly categoryService: CategoriesService,
   ) {}
 
   async findAll(options: IPaginationOptions): Promise<Pagination<Product>> {
-    return paginate<Product>(this.categoriesRepository, options, {
+    return paginate<Product>(this.productsRepository, options, {
       relations: ['category'],
     });
   }
@@ -43,7 +44,7 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
   
-    return paginate<Product>(this.categoriesRepository, options, {
+    return paginate<Product>(this.productsRepository, options, {
       where: {
         category: { id: product.category.id },
         id: Not(productId), 
@@ -51,8 +52,31 @@ export class ProductsService {
       relations: ['category'],
     });
   }
+
+  async filterBySizeAndCategory(
+    categoryId: string,
+    sizes: string[], 
+    options: IPaginationOptions,
+  ): Promise<Pagination<Product>> {
+    
+    const queryBuilder = this.productsRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category') 
+      .where('product.categoryId = :categoryId', { categoryId });
+  
+    if (sizes && sizes.length > 0) {
+      queryBuilder.andWhere('product.size IN (:...sizes)', { sizes });
+    }
+  
+    queryBuilder.orderBy('product.createdAt', 'DESC'); 
+  
+    return paginate<Product>(queryBuilder, options);
+  }
+  
+  
+
+
   async findOne(id: string): Promise<Product | null> {
-    return await this.categoriesRepository.findOne({
+    return await this.productsRepository.findOne({
       where: { id },
       relations: ['category'],
     });
@@ -73,13 +97,13 @@ export class ProductsService {
         throw new NotFoundException();
       }
 
-      const product = this.categoriesRepository.create({
+      const product = this.productsRepository.create({
         ...productData,
         imageUrl: url,
         category: category,
       });
 
-      return this.categoriesRepository.save(product);
+      return this.productsRepository.save(product);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException('Category not found');
@@ -113,7 +137,7 @@ export class ProductsService {
 
       const updatedProduct = Object.assign(existingProduct, productData);
 
-      return await this.categoriesRepository.save(updatedProduct);
+      return await this.productsRepository.save(updatedProduct);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -125,7 +149,7 @@ export class ProductsService {
   }
 
   async delete(id: string): Promise<void> {
-    const result = await this.categoriesRepository.delete({ id });
+    const result = await this.productsRepository.delete({ id });
 
     if (result.affected === 0) {
       throw new InternalServerErrorException(
