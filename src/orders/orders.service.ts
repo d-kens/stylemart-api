@@ -4,15 +4,8 @@ import { OrderItem } from 'src/entities/order-item.entity';
 import { Order } from 'src/entities/order.entity';
 import { ProductsService } from 'src/products/products.service';
 import { DataSource, Repository } from 'typeorm';
+import { Cart, ProductDetails } from './dtos/cart-response';
 
-interface ProductDetails {
-    productName: string;
-    price: number;
-    brand: string;
-    imageUrl: string;
-    quantity: number;
-    productId: string;
-}
 
 @Injectable()
 export class OrdersService {
@@ -27,12 +20,11 @@ export class OrdersService {
         private dataSource: DataSource,
     ) {}
 
-    async getCartDetails(productIds: string[], userId: string): Promise<ProductDetails[]> {
+    async getCartDetails(productIds: string[], userId: string): Promise<Cart> {
         const products: ProductDetails[] = [];
         let totalPrice = 0;
-
+    
         try {
-
             for (const productId of productIds) {
                 const product = await this.productService.findOne(productId);
                 
@@ -50,22 +42,25 @@ export class OrdersService {
                     totalPrice += product.price; 
                 }
             }
-
+    
+            const cart: Cart = {
+                products: products,
+            };
+    
             const order = this.orderRepository.create({
                 total: totalPrice,
                 user: { id: userId },
-            })
-
-
+            });
+    
             await this.orderRepository.save(order);
-            return products;
-
+            return cart;  
+    
         } catch (err) {
             this.logger.error(`Error retrieving cart details: ${err.message}`);
             throw new InternalServerErrorException('Error retrieving cart details');
         }
-
     }
+    
     
     
 }

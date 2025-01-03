@@ -1,8 +1,12 @@
-interface ProductDetails {
+export interface ProductDetails {
     productName: string;
     price: number;
     brand: string;
     imageUrl: string;
     quantity: number;
     productId: string;
+}
+
+export interface Cart {
+    products: ProductDetails[];
 }
