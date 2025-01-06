@@ -37,6 +37,7 @@ export class UpdateCartItemDto {
   @IsNotEmpty()
   @IsString()
   productId: string;
+  
 
   @IsPositive()
   quantity: number;
