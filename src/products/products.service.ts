@@ -3,19 +3,19 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import {
   IPaginationOptions,
   paginate,
   Pagination,
-} from 'nestjs-typeorm-paginate';
-import { Product } from 'src/entities/product.entity';
-import { FirebaseProvider } from 'src/storage/firebase/firebase';
-import { Not, Repository } from 'typeorm';
-import { CategoriesService } from 'src/categories/categories.service';
-import { CreateProductDto, UpdateProductDto } from 'src/dtos/product.dto';
-import { Size } from 'src/enums/size.enum';
+} from "nestjs-typeorm-paginate";
+import { Product } from "src/entities/product.entity";
+import { FirebaseProvider } from "src/storage/firebase/firebase";
+import { Not, Repository } from "typeorm";
+import { CategoriesService } from "src/categories/categories.service";
+import { CreateProductDto, UpdateProductDto } from "src/dtos/product.dto";
+import { Size } from "src/enums/size.enum";
 
 @Injectable()
 export class ProductsService {
@@ -33,49 +33,46 @@ export class ProductsService {
     categoryId?: string,
     sizes?: string[],
   ): Promise<Pagination<Product>> {
-    const queryBuilder = this.productsRepository.createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category');
-  
+    const queryBuilder = this.productsRepository
+      .createQueryBuilder("product")
+      .leftJoinAndSelect("product.category", "category");
+
     if (categoryId) {
-      queryBuilder.where('product.categoryId = :categoryId', { categoryId });
+      queryBuilder.where("product.categoryId = :categoryId", { categoryId });
     }
-  
+
     if (sizes && sizes.length > 0) {
-      queryBuilder.andWhere('product.size IN (:...sizes)', { sizes });
+      queryBuilder.andWhere("product.size IN (:...sizes)", { sizes });
     }
-  
-    queryBuilder.orderBy('product.createdAt', 'DESC');
-  
+
+    queryBuilder.orderBy("product.createdAt", "DESC");
+
     return paginate<Product>(queryBuilder, options);
   }
-  
-  
 
   async findRelatedProduct(
     productId: string,
     options: IPaginationOptions,
   ): Promise<Pagination<Product>> {
     const product = await this.findOne(productId);
-  
+
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException("Product not found");
     }
-  
+
     return paginate<Product>(this.productsRepository, options, {
       where: {
         category: { id: product.category.id },
-        id: Not(productId), 
+        id: Not(productId),
       },
-      relations: ['category'],
+      relations: ["category"],
     });
   }
-  
-
 
   async findOne(id: string): Promise<Product | null> {
     return await this.productsRepository.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ["category"],
     });
   }
 
@@ -103,10 +100,10 @@ export class ProductsService {
       return this.productsRepository.save(product);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException('Category not found');
+        throw new NotFoundException("Category not found");
       } else {
-        this.logger.error('Error Creating Product', error);
-        throw new InternalServerErrorException('Failed to create product');
+        this.logger.error("Error Creating Product", error);
+        throw new InternalServerErrorException("Failed to create product");
       }
     }
   }
@@ -120,7 +117,7 @@ export class ProductsService {
       const existingProduct = await this.findOne(productId);
 
       if (!existingProduct) {
-        throw new NotFoundException('Product not found');
+        throw new NotFoundException("Product not found");
       }
 
       if (file) {
@@ -139,8 +136,8 @@ export class ProductsService {
       if (error instanceof NotFoundException) {
         throw error;
       } else {
-        this.logger.error('Error Creating Product', error);
-        throw new InternalServerErrorException('Failed to update product');
+        this.logger.error("Error Creating Product", error);
+        throw new InternalServerErrorException("Failed to update product");
       }
     }
   }
@@ -154,6 +151,4 @@ export class ProductsService {
       );
     }
   }
-
-  
 }

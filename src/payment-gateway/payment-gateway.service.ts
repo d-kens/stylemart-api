@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PaymentRequest } from './dtos/payment-request';
-import { Providers } from './enums/providers';
-import { PaymentProvider } from './payment-providers/payment-provider.interface';
-import { MpesaService } from './payment-providers/mpesa/mpesa.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { PaymentRequest } from "./dtos/payment-request";
+import { Providers } from "./enums/providers";
+import { PaymentProvider } from "./payment-providers/payment-provider.interface";
+import { MpesaService } from "./payment-providers/mpesa/mpesa.service";
 
 @Injectable()
 export class PaymentGatewayService {
@@ -21,7 +21,7 @@ export class PaymentGatewayService {
     const selectedProvider = this.paymentProviders.get(paymentRequest.provider);
 
     if (!selectedProvider) {
-      throw new Error('Invalid payment provider selected.');
+      throw new Error("Invalid payment provider selected.");
     }
 
     return selectedProvider.initiatePayment(paymentRequest);

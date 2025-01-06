@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import * as otplib from 'otplib';
-import { OTP } from 'src/entities/otp.entity';
-import { Repository } from 'typeorm';
-import { authenticator } from 'otplib';
-import { MailerService } from 'src/mailer/mailer.service';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import * as otplib from "otplib";
+import { OTP } from "src/entities/otp.entity";
+import { Repository } from "typeorm";
+import { authenticator } from "otplib";
+import { MailerService } from "src/mailer/mailer.service";
 
 otplib.authenticator.options = {
   digits: 6,
@@ -71,27 +71,27 @@ export class OtpService {
     const otpEntry = await this.otpRepository.findOne({ where: { userId } });
 
     if (!otpEntry) {
-      throw new NotFoundException('No OTP found for the user.');
+      throw new NotFoundException("No OTP found for the user.");
     }
     const currentTime = new Date();
     const expiryTime = new Date(otpEntry.expiryTime);
 
     if (currentTime > expiryTime) {
-      throw new GoneException('OTP has expired');
+      throw new GoneException("OTP has expired");
     }
 
     if (otpEntry.verified) {
-      throw new GoneException('OTP has already been used. Generate a new one.');
+      throw new GoneException("OTP has already been used. Generate a new one.");
     }
 
     if (otp !== otpEntry.otp) {
-      throw new UnauthorizedException('Invalid OTP.');
+      throw new UnauthorizedException("Invalid OTP.");
     }
 
     otpEntry.verified = true;
     await this.otpRepository.save(otpEntry);
 
-    return { message: 'OTP verification successful.' };
+    return { message: "OTP verification successful." };
   }
 
   async revokeOTP(userId: string): Promise<{ message: string }> {
@@ -101,6 +101,6 @@ export class OtpService {
       throw new NotFoundException(`OTP with ID: ${userId} not found`);
     }
 
-    return { message: 'OTP revoked succesfully' };
+    return { message: "OTP revoked succesfully" };
   }
 }

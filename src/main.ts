@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { Logger, ValidationPipe } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,9 +15,9 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: [process.env.WEB_DOMAIN, 'http://localhost:4200'],
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
-    allowedHeaders: ['content-type', 'authorization'],
+    origin: [process.env.WEB_DOMAIN, "http://localhost:4200"],
+    methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+    allowedHeaders: ["content-type", "authorization"],
     credentials: true,
   });
 

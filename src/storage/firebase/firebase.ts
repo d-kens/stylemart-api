@@ -1,6 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { FirebaseAdmin, InjectFirebaseAdmin } from 'nestjs-firebase';
-import * as process from 'process';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
+import { FirebaseAdmin, InjectFirebaseAdmin } from "nestjs-firebase";
+import * as process from "process";
 
 @Injectable()
 export class FirebaseProvider {
@@ -12,7 +16,7 @@ export class FirebaseProvider {
   ) {}
 
   async upload(file: Express.Multer.File): Promise<{ url: string }> {
-    const sanitizedFileName = file.originalname.replace(/\s+/g, '_');
+    const sanitizedFileName = file.originalname.replace(/\s+/g, "_");
     const uniqueFileName = `${Date.now()}-${sanitizedFileName}`;
 
     const bucket = this.firebase.storage.bucket(this.bucketName);
@@ -27,13 +31,12 @@ export class FirebaseProvider {
     });
 
     return new Promise((resolve, reject) => {
-      stream.on('error', (error) => {
+      stream.on("error", (error) => {
         this.logger.error(`Failed to upload file: ${error.message}`);
         reject(new Error(`Failed to upload file: ${error.message}`));
       });
 
-      stream.on('finish', async () => {
-
+      stream.on("finish", async () => {
         try {
           await fileUpload.makePublic();
           const publicUrl = `https://storage.googleapis.com/${this.bucketName}/${uniqueFileName}`;
@@ -41,12 +44,11 @@ export class FirebaseProvider {
         } catch (err) {
           reject(
             new InternalServerErrorException(
-              'Error fetching file metadata',
+              "Error fetching file metadata",
               err.message,
             ),
           );
         }
-        
       });
 
       stream.end(file.buffer);
@@ -80,7 +82,7 @@ export class FirebaseProvider {
   }
 
   private extractFileNameFromUrl(url: string): string {
-    const urlParts = url.split('/');
+    const urlParts = url.split("/");
     return urlParts[urlParts.length - 1];
   }
 }

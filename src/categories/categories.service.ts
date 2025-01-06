@@ -3,10 +3,10 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/entities/category.entity';
-import { Repository } from 'typeorm';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Category } from "src/entities/category.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class CategoriesService {
@@ -33,15 +33,15 @@ export class CategoriesService {
     });
 
     if (existingCategory) {
-      throw new ConflictException('Category already exists');
+      throw new ConflictException("Category already exists");
     }
 
     try {
       const newCategory = this.categoriesRepository.create({ name });
       return await this.categoriesRepository.save(newCategory);
     } catch (error) {
-      this.logger.error('Error Creating Category', error);
-      throw new InternalServerErrorException('Could not create category');
+      this.logger.error("Error Creating Category", error);
+      throw new InternalServerErrorException("Could not create category");
     }
   }
 

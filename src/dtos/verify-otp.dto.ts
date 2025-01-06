@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class VerifyOTPDto {
   @IsNotEmpty()
@@ -7,6 +7,6 @@ export class VerifyOTPDto {
 
   @IsNotEmpty()
   @IsString()
-  @Matches(/^[0-9]{6}$/, { message: 'OTP must be a string of 6 digits.' })
+  @Matches(/^[0-9]{6}$/, { message: "OTP must be a string of 6 digits." })
   otp: string;
 }

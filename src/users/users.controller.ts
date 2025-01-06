@@ -1,13 +1,13 @@
-import { Controller, Delete, Get, Param, Put, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UserReponseDto } from 'src/dtos/user-reponse.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { RoleEnum } from 'src/enums/role.enum';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UpdateUserDto } from 'src/dtos/update-user.dto';
+import { Controller, Delete, Get, Param, Put, UseGuards } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { UserReponseDto } from "src/dtos/user-reponse.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { RolesGuard } from "src/auth/guards/roles.guard";
+import { RoleEnum } from "src/enums/role.enum";
+import { Roles } from "src/auth/decorators/roles.decorator";
+import { UpdateUserDto } from "src/dtos/update-user.dto";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -21,25 +21,25 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':userId')
-  async findOne(@Param('userId') userId: string): Promise<UserReponseDto> {
+  @Get(":userId")
+  async findOne(@Param("userId") userId: string): Promise<UserReponseDto> {
     const result = await this.usersService.findOneById(userId);
     return new UserReponseDto(result);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':userId')
+  @Put(":userId")
   async update(
     userData: UpdateUserDto,
-    @Param('userId') userId: string,
+    @Param("userId") userId: string,
   ): Promise<UserReponseDto> {
     const result = await this.usersService.update(userId, userData);
     return new UserReponseDto(result);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':userId')
-  async delete(@Param('userId') userId: string) {
+  @Delete(":userId")
+  async delete(@Param("userId") userId: string) {
     return await this.usersService.delete(userId);
   }
 }

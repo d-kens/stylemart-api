@@ -4,13 +4,13 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from 'src/dtos/create-user.dto';
-import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
-import { hash } from 'bcrypt';
-import { UpdateUserDto } from 'src/dtos/update-user.dto';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto } from "src/dtos/create-user.dto";
+import { User } from "src/entities/user.entity";
+import { Repository } from "typeorm";
+import { hash } from "bcrypt";
+import { UpdateUserDto } from "src/dtos/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -37,7 +37,7 @@ export class UsersService {
   async create(userData: CreateUserDto): Promise<User> {
     const existingUser = await this.findUserByEmail(userData.email);
 
-    if (existingUser) throw new ConflictException('User alrady exists');
+    if (existingUser) throw new ConflictException("User alrady exists");
 
     try {
       const hashedPassword = await hash(userData.password, 10);
@@ -49,8 +49,8 @@ export class UsersService {
 
       return this.usersRepository.save(newUser);
     } catch (error) {
-      this.logger.error('Error Creating User', error);
-      throw new InternalServerErrorException('Could not create user');
+      this.logger.error("Error Creating User", error);
+      throw new InternalServerErrorException("Could not create user");
     }
   }
 
@@ -64,8 +64,8 @@ export class UsersService {
       const updatedUser = Object.assign(existingUser, userData);
       return await this.usersRepository.save(updatedUser);
     } catch (error) {
-      this.logger.error('Error Updating User', error);
-      throw new InternalServerErrorException('Could not update user');
+      this.logger.error("Error Updating User", error);
+      throw new InternalServerErrorException("Could not update user");
     }
   }
 

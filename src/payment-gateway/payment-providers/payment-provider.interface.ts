@@ -1,4 +1,4 @@
-import { PaymentRequest } from '../dtos/payment-request';
+import { PaymentRequest } from "../dtos/payment-request";
 
 export interface PaymentProvider {
   authenticate(): Promise<string>;

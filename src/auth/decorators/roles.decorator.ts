@@ -11,10 +11,10 @@
    - Uses setmetadata to attach the roles to the target route/controller under the key roles
  */
 
-import { SetMetadata } from '@nestjs/common';
-import { RoleEnum } from 'src/enums/role.enum';
+import { SetMetadata } from "@nestjs/common";
+import { RoleEnum } from "src/enums/role.enum";
 
-export const ROLES_KEY = 'roles';
+export const ROLES_KEY = "roles";
 
 export const Roles = (...roles: [RoleEnum, ...RoleEnum[]]) =>
   SetMetadata(ROLES_KEY, roles);

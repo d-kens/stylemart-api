@@ -1,4 +1,4 @@
 export enum TransactionType {
-  STK = 'STK',
-  PAYBILL = 'PAYBILL',
+  STK = "STK",
+  PAYBILL = "PAYBILL",
 }

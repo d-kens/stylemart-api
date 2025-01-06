@@ -1,3 +1,3 @@
 export enum Providers {
-  MPESA = 'MPESA',
+  MPESA = "MPESA",
 }

@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('tbl_otps')
+@Entity("tbl_otps")
 export class OTP {
   @PrimaryGeneratedColumn()
   id: number;

@@ -1,5 +1,5 @@
-import { PaymentStatus } from 'src/payment-gateway/enums/payment-status';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { PaymentStatus } from "src/payment-gateway/enums/payment-status";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Transaction {
@@ -22,17 +22,17 @@ export class Transaction {
   requestCode: string;
 
   @Column()
-  responseCode?: string = '';
+  responseCode?: string = "";
 
   @Column()
   status?: PaymentStatus = PaymentStatus.PENDING;
 
   @Column()
-  paidAmount?: string = '0.00';
+  paidAmount?: string = "0.00";
 
   @Column()
-  receiptNumber?: string = '';
+  receiptNumber?: string = "";
 
   @Column()
-  responseDesc?: string = '';
+  responseDesc?: string = "";
 }

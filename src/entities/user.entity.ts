@@ -1,45 +1,47 @@
-import { RoleEnum } from 'src/enums/role.enum';
+import { RoleEnum } from "src/enums/role.enum";
 import {
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Token } from './token.entity';
-import { Order } from './order.entity';
+} from "typeorm";
+import { Token } from "./token.entity";
+import { Order } from "./order.entity";
+import { Cart } from "./cart.entity";
 
-@Entity('tbl_users')
+@Entity("tbl_users")
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: 'firstname', type: 'varchar', length: 60 })
+  @Column({ name: "firstname", type: "varchar", length: 60 })
   firstName: string;
 
-  @Column({ name: 'lastname', type: 'varchar', length: 100 })
+  @Column({ name: "lastname", type: "varchar", length: 100 })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
+  @Column({ type: "varchar", length: 255, nullable: false, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: "varchar", length: 255, nullable: false })
   password: string;
 
   @Column({
-    name: 'phone_number',
-    type: 'varchar',
+    name: "phone_number",
+    type: "varchar",
     length: 20,
     nullable: false,
   })
   phoneNumber: string;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: "boolean", default: true })
   isEmailVerified: boolean;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: RoleEnum,
     default: RoleEnum.USER,
   })
@@ -48,10 +50,10 @@ export class User {
   @Column({ nullable: true })
   refreshToken: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
   @OneToMany(() => Token, (token) => token.user, { cascade: true })
@@ -59,4 +61,7 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }

@@ -1,18 +1,18 @@
-import { HttpService } from '@nestjs/axios';
+import { HttpService } from "@nestjs/axios";
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { AxiosError } from 'axios';
-import { catchError, firstValueFrom } from 'rxjs';
-import { TransactionsService } from 'src/payment-gateway/transactions/transactions.service';
-import { PaymentProvider } from '../payment-provider.interface';
-import { PaymentRequest } from 'src/payment-gateway/dtos/payment-request';
-import { Transaction } from 'src/entities/transaction.entity';
-import { TransactionType } from 'src/payment-gateway/enums/transaction-type';
-import { StkRequest } from './dto/stk-request';
-import { StkResponse } from './dto/stk-response';
+} from "@nestjs/common";
+import { AxiosError } from "axios";
+import { catchError, firstValueFrom } from "rxjs";
+import { TransactionsService } from "src/payment-gateway/transactions/transactions.service";
+import { PaymentProvider } from "../payment-provider.interface";
+import { PaymentRequest } from "src/payment-gateway/dtos/payment-request";
+import { Transaction } from "src/entities/transaction.entity";
+import { TransactionType } from "src/payment-gateway/enums/transaction-type";
+import { StkRequest } from "./dto/stk-request";
+import { StkResponse } from "./dto/stk-response";
 
 @Injectable()
 export class MpesaService implements PaymentProvider {
@@ -35,8 +35,8 @@ export class MpesaService implements PaymentProvider {
       !MPESA_CONSUMER_KEY ||
       !MPESA_CONSUMER_SECRET
     ) {
-      this.logger.error('MPESA environment variables are not set');
-      throw new Error('MPESA authentication configuration is invalid');
+      this.logger.error("MPESA environment variables are not set");
+      throw new Error("MPESA authentication configuration is invalid");
     }
 
     const { data } = await firstValueFrom(
@@ -47,13 +47,13 @@ export class MpesaService implements PaymentProvider {
             password: MPESA_CONSUMER_SECRET,
           },
           params: {
-            grant_type: 'client_credentials',
+            grant_type: "client_credentials",
           },
         })
         .pipe(
           catchError((err: AxiosError) => {
             this.logger.error(err.message);
-            throw new Error('MPESA Authentication Failed');
+            throw new Error("MPESA Authentication Failed");
           }),
         ),
     );
@@ -62,7 +62,7 @@ export class MpesaService implements PaymentProvider {
       `MPESA Authentication successful, token acquired. Expires in: ${data.expires_in} seconds`,
     );
 
-    this.logger.log('ACESS TOKEN: ' + data.access_token);
+    this.logger.log("ACESS TOKEN: " + data.access_token);
 
     return data.access_token;
   }
@@ -79,7 +79,7 @@ export class MpesaService implements PaymentProvider {
     const stkRequest = this.buildStkRequest(
       paymentRequest.amount,
       paymentRequest.orderId,
-      paymentRequest.mobile.phoneNumber.replace('+', ''),
+      paymentRequest.mobile.phoneNumber.replace("+", ""),
     );
 
     this.logger.log(JSON.stringify(stkRequest));
@@ -93,10 +93,10 @@ export class MpesaService implements PaymentProvider {
         .pipe(
           catchError((err: AxiosError) => {
             this.logger.error(err.message);
-            this.logger.error('FAILED INITIATING STK PAYMENT');
+            this.logger.error("FAILED INITIATING STK PAYMENT");
             this.logger.error(err);
             console.error(
-              'Error:',
+              "Error:",
               err.response ? err.response.data : err.message,
             );
             throw new InternalServerErrorException(err.message);
@@ -104,7 +104,7 @@ export class MpesaService implements PaymentProvider {
         ),
     );
 
-    this.logger.log('STKResponse: {}', data);
+    this.logger.log("STKResponse: {}", data);
     return this.buildAndSaveTransaction(paymentRequest, data);
   }
 
@@ -116,20 +116,20 @@ export class MpesaService implements PaymentProvider {
     const shortCode = process.env.MPESA_STK_SHORTCODE;
     const timestamp = this.getFormattedDate();
     const dataToEncode = `${shortCode}${process.env.MPESA_PASSKEY}${timestamp}`;
-    const pass = Buffer.from(dataToEncode).toString('base64');
+    const pass = Buffer.from(dataToEncode).toString("base64");
 
     const stkRequest = new StkRequest();
     stkRequest.Amount = amount.toString();
     stkRequest.BusinessShortCode = shortCode;
     stkRequest.Password = pass;
-    stkRequest.TransactionType = 'CustomerPayBillOnline';
+    stkRequest.TransactionType = "CustomerPayBillOnline";
     stkRequest.AccountReference = paymentRef;
     stkRequest.PartyA = accountNo;
     stkRequest.PartyB = shortCode;
     stkRequest.PhoneNumber = accountNo;
     stkRequest.CallBackURL = process.env.MPESA_CALLBACK;
     stkRequest.Timestamp = timestamp;
-    stkRequest.TransactionDesc = 'Stylemart Goods Payment';
+    stkRequest.TransactionDesc = "Stylemart Goods Payment";
     return stkRequest;
   }
 
@@ -148,12 +148,12 @@ export class MpesaService implements PaymentProvider {
 
   getFormattedDate(): string {
     const currentDate = new Date();
-    const year = currentDate.getFullYear().toString().padStart(4, '0');
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-    const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+    const year = currentDate.getFullYear().toString().padStart(4, "0");
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = currentDate.getDate().toString().padStart(2, "0");
+    const hours = currentDate.getHours().toString().padStart(2, "0");
+    const minutes = currentDate.getMinutes().toString().padStart(2, "0");
+    const seconds = currentDate.getSeconds().toString().padStart(2, "0");
 
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }

@@ -5,10 +5,10 @@ import {
   IsString,
   ValidateIf,
   ValidateNested,
-} from 'class-validator';
-import { Providers } from '../enums/providers';
-import { Type } from 'class-transformer';
-import { MobileMoney } from './mobile-money';
+} from "class-validator";
+import { Providers } from "../enums/providers";
+import { Type } from "class-transformer";
+import { MobileMoney } from "./mobile-money";
 
 export class PaymentRequest {
   @IsString()

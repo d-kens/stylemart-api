@@ -4,21 +4,21 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { CreateUserDto } from 'src/dtos/create-user.dto';
-import { UsersService } from 'src/users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import * as process from 'process';
-import * as bcrypt from 'bcrypt';
-import { User } from 'src/entities/user.entity';
-import { Response } from 'express';
-import { TokenPayload } from './interfaces/token-payload.interface';
-import { TokenService } from 'src/token/token.service';
-import { TokenType } from 'src/enums/toke-type.enum';
-import { ResetPasswordDto } from 'src/dtos/reset-password.dto';
-import { hash } from 'bcrypt';
-import { ChangepasswordDto } from 'src/dtos/change-password.dto';
-import { MailerService } from 'src/mailer/mailer.service';
+} from "@nestjs/common";
+import { CreateUserDto } from "src/dtos/create-user.dto";
+import { UsersService } from "src/users/users.service";
+import { JwtService } from "@nestjs/jwt";
+import * as process from "process";
+import * as bcrypt from "bcrypt";
+import { User } from "src/entities/user.entity";
+import { Response } from "express";
+import { TokenPayload } from "./interfaces/token-payload.interface";
+import { TokenService } from "src/token/token.service";
+import { TokenType } from "src/enums/toke-type.enum";
+import { ResetPasswordDto } from "src/dtos/reset-password.dto";
+import { hash } from "bcrypt";
+import { ChangepasswordDto } from "src/dtos/change-password.dto";
+import { MailerService } from "src/mailer/mailer.service";
 
 @Injectable()
 export class AuthService {
@@ -68,7 +68,7 @@ export class AuthService {
         refreshToken: await bcrypt.hash(refreshToken, 10),
       });
 
-      response.cookie('RefreshToken', refreshToken, {
+      response.cookie("RefreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
         expires: refreshTokenExpiryTime,
@@ -78,8 +78,8 @@ export class AuthService {
         accessToken: accessToken,
       };
     } catch (error) {
-      this.logger.error('USER AUTHENTICATION FAILED', error);
-      throw new InternalServerErrorException('User authentication failed');
+      this.logger.error("USER AUTHENTICATION FAILED", error);
+      throw new InternalServerErrorException("User authentication failed");
     }
   }
 
@@ -87,7 +87,7 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(email);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
 
     const passwordResetToken = await this.tokenService.createToken(
@@ -101,7 +101,7 @@ export class AuthService {
     await this.mailerService.sendPasswordResetEmail(user.email, pwdResetLink);
 
     return {
-      message: 'Password reset link has been sent to your email.',
+      message: "Password reset link has been sent to your email.",
     };
   }
 
@@ -111,12 +111,12 @@ export class AuthService {
 
     const password = await hash(newPassword, 10);
 
-    console.log('New password: ' + password);
+    console.log("New password: " + password);
 
     await this.userService.update(user.id, { password });
 
     return {
-      message: 'Password reset succesful',
+      message: "Password reset succesful",
     };
   }
 
@@ -126,7 +126,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
     if (!isPasswordValid) {
-      throw new BadRequestException('Incorrect old password');
+      throw new BadRequestException("Incorrect old password");
     }
 
     const password = await hash(newPassword, 10);
@@ -134,7 +134,7 @@ export class AuthService {
     await this.userService.update(user.id, { password });
 
     return {
-      message: 'Password changed successfully',
+      message: "Password changed successfully",
     };
   }
 
@@ -142,12 +142,12 @@ export class AuthService {
     const user = await this.tokenService.validateToken(token);
 
     if (user.isEmailVerified)
-      throw new BadRequestException('User has already been verified');
+      throw new BadRequestException("User has already been verified");
 
     await this.userService.update(user.id, { isEmailVerified: true });
 
     return {
-      message: 'Email verification successful.',
+      message: "Email verification successful.",
     };
   }
 

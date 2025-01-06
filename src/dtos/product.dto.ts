@@ -1,7 +1,7 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Type } from 'class-transformer'; // Used for automatic transformation
-import { Size } from 'src/enums/size.enum';
-import { PartialType } from '@nestjs/mapped-types';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Type } from "class-transformer"; // Used for automatic transformation
+import { Size } from "src/enums/size.enum";
+import { PartialType } from "@nestjs/mapped-types";
 
 export class CreateProductDto {
   @IsString()

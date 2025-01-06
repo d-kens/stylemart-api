@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Firebase } from './firebase';
+import { Test, TestingModule } from "@nestjs/testing";
+import { Firebase } from "./firebase";
 
-describe('Firebase', () => {
+describe("Firebase", () => {
   let provider: Firebase;
 
   beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('Firebase', () => {
     provider = module.get<Firebase>(Firebase);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(provider).toBeDefined();
   });
 });

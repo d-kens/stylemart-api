@@ -1,29 +1,29 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
-import { TokenType } from 'src/enums/toke-type.enum';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user.entity";
+import { TokenType } from "src/enums/toke-type.enum";
 
-@Entity('tbl_tokens')
+@Entity("tbl_tokens")
 export class Token {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({
-    type: 'varchar',
+    type: "varchar",
     nullable: false,
   })
   token: string;
 
   @Column({
-    name: 'toke-type',
-    type: 'enum',
+    name: "toke-type",
+    type: "enum",
     enum: TokenType,
     nullable: false,
   })
   tokenType: TokenType;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: "boolean", default: false })
   used: boolean;
 
-  @ManyToOne(() => User, (user) => user.tokens, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.tokens, { onDelete: "CASCADE" })
   user: User;
 }

@@ -3,15 +3,15 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Token } from 'src/entities/token.entity';
-import { Repository } from 'typeorm';
-import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
-import * as process from 'process';
-import { TokenType } from 'src/enums/toke-type.enum';
-import { User } from 'src/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Token } from "src/entities/token.entity";
+import { Repository } from "typeorm";
+import { JsonWebTokenError, JwtService, TokenExpiredError } from "@nestjs/jwt";
+import * as process from "process";
+import { TokenType } from "src/enums/toke-type.enum";
+import { User } from "src/entities/user.entity";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class TokenService {
@@ -61,15 +61,15 @@ export class TokenService {
         where: { token },
       });
 
-      console.log('Fetched token record: ' + tokenRecord);
+      console.log("Fetched token record: " + tokenRecord);
 
       if (!tokenRecord) {
-        throw new BadRequestException('Verification token not found');
+        throw new BadRequestException("Verification token not found");
       }
 
       if (tokenRecord.used) {
         throw new BadRequestException(
-          'Verification token has already been used',
+          "Verification token has already been used",
         );
       }
 
@@ -84,14 +84,14 @@ export class TokenService {
       this.logger.error(error);
 
       if (error instanceof TokenExpiredError) {
-        throw new BadRequestException('Verification token has expired');
+        throw new BadRequestException("Verification token has expired");
       } else if (error instanceof JsonWebTokenError) {
-        throw new BadRequestException('Invalid verification token');
+        throw new BadRequestException("Invalid verification token");
       } else if (error instanceof BadRequestException) {
         throw new BadRequestException(error.message);
       } else {
         throw new InternalServerErrorException(
-          'An error occurred while verifying the token',
+          "An error occurred while verifying the token",
         );
       }
     }
