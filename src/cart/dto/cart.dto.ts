@@ -26,12 +26,12 @@ export class CartItemDto {
 }
 
 export class CartDto {
-  cartItems: CartItemDto[];
-
-  constructor(cartItems: any[]) {
-    this.cartItems = cartItems.map((cartItem) => new CartItemDto(cartItem));
+    cart: { items: CartItemDto[] };
+  
+    constructor(cartItems: any[]) {
+      this.cart = { items: cartItems.map((cartItem) => new CartItemDto(cartItem)) };
+    }
   }
-}
 
 export class UpdateCartItemDto {
   @IsNotEmpty()
