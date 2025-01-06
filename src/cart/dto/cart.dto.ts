@@ -26,18 +26,17 @@ export class CartItemDto {
 }
 
 export class CartDto {
-    cart: { items: CartItemDto[] };
+  items: CartItemDto[]; 
   
-    constructor(cartItems: any[]) {
-      this.cart = { items: cartItems.map((cartItem) => new CartItemDto(cartItem)) };
-    }
+  constructor(cartItems: any[]) {
+    this.items = cartItems.map((cartItem) => new CartItemDto(cartItem));
   }
+}
 
 export class UpdateCartItemDto {
   @IsNotEmpty()
   @IsString()
   productId: string;
-  
 
   @IsPositive()
   quantity: number;
