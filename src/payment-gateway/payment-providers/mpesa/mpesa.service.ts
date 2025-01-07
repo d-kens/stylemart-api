@@ -13,6 +13,9 @@ import { Transaction } from "src/entities/transaction.entity";
 import { TransactionType } from "src/payment-gateway/enums/transaction-type";
 import { StkRequest } from "./dto/stk-request";
 import { StkResponse } from "./dto/stk-response";
+import { MpesaResponse } from "./dto/mpesa-response";
+import { MpesaCallbackResponse } from "./dto/mpesa-callback-response";
+import { PaymentStatus } from "src/payment-gateway/enums/payment-status";
 
 @Injectable()
 export class MpesaService implements PaymentProvider {
@@ -144,6 +147,45 @@ export class MpesaService implements PaymentProvider {
     transaction.description = `${paymentRequest.amount} paid by [USER] for transaction ${paymentRequest.orderId}`;
     transaction.requestCode = data.MerchantRequestID;
     return await this.transactionService.createTransaction(transaction);
+  }
+
+  async handleCallback(paymentResponse: MpesaResponse): Promise<MpesaCallbackResponse> {
+    try {
+      this.logger.log(`Processing MPESA callback: ${JSON.stringify(paymentResponse)}`);
+
+      const checkoutRequestID = paymentResponse.Body.stkCallback.CheckoutRequestID;
+      const transaction = await this.transactionService.findByRequestCode(checkoutRequestID);
+
+      if (!transaction) {
+        this.logger.error(`No transaction found for CheckoutRequestID: ${checkoutRequestID}`);
+        return new MpesaCallbackResponse("1", "Transaction not found");
+      }
+
+      const resultCode = paymentResponse.Body.stkCallback.ResultCode;
+      const resultDesc = paymentResponse.Body.stkCallback.ResultDesc;
+
+      if (resultCode === 0) {
+        const callbackMetadata = paymentResponse.Body.stkCallback.CallbackMetadata;
+        const mpesaReceiptNumber = callbackMetadata?.Item?.find(item => item.Name === "MpesaReceiptNumber")?.Value;
+
+        transaction.status = PaymentStatus.SUCCESS;
+        transaction.receiptNumber = mpesaReceiptNumber?.toString();
+        transaction.description = resultDesc;
+
+        this.logger.log(`Payment successful for transaction ${transaction.orderId}. Receipt: ${mpesaReceiptNumber}`);
+      } else {
+        transaction.status = PaymentStatus.FAILED;
+        transaction.description = resultDesc;
+
+        this.logger.error(`Payment failed for transaction ${transaction.orderId}. Reason: ${resultDesc}`);
+      }
+
+      await this.transactionService.updateTransaction(transaction);
+      return new MpesaCallbackResponse("0", "Success");
+    } catch (error) {
+      this.logger.error(`Error processing callback: ${error.message}`, error.stack);
+      return new MpesaCallbackResponse("1", "Internal server error");
+    }
   }
 
   getFormattedDate(): string {

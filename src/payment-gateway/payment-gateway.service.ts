@@ -3,6 +3,8 @@ import { PaymentRequest } from "./dtos/payment-request";
 import { Providers } from "./enums/providers";
 import { PaymentProvider } from "./payment-providers/payment-provider.interface";
 import { MpesaService } from "./payment-providers/mpesa/mpesa.service";
+import { TransactionsService } from "./transactions/transactions.service";
+import { Transaction } from "../entities/transaction.entity";
 
 @Injectable()
 export class PaymentGatewayService {
@@ -13,11 +15,14 @@ export class PaymentGatewayService {
     PaymentProvider
   >();
 
-  constructor(private readonly mpesa: MpesaService) {
+  constructor(
+    private readonly mpesa: MpesaService,
+    private readonly transactionService: TransactionsService,
+  ) {
     this.paymentProviders = this.paymentProviders.set(Providers.MPESA, mpesa);
   }
 
-  initiatePayment(paymentRequest: PaymentRequest): Promise<any> {
+  async initiatePayment(paymentRequest: PaymentRequest): Promise<any> {
     const selectedProvider = this.paymentProviders.get(paymentRequest.provider);
 
     if (!selectedProvider) {
@@ -25,5 +30,21 @@ export class PaymentGatewayService {
     }
 
     return selectedProvider.initiatePayment(paymentRequest);
+  }
+
+  getProvider(provider: Providers): PaymentProvider {
+    const selectedProvider = this.paymentProviders.get(provider);
+    if (!selectedProvider) {
+      throw new Error("Invalid payment provider selected.");
+    }
+    return selectedProvider;
+  }
+
+  async findTransactionByRequestCode(requestCode: string): Promise<Transaction> {
+    return this.transactionService.findByRequestCode(requestCode);
+  }
+
+  async updateTransaction(transaction: Transaction): Promise<Transaction> {
+    return this.transactionService.updateTransaction(transaction);
   }
 }
