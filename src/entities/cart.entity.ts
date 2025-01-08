@@ -16,9 +16,6 @@ export class Cart {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column("decimal", { precision: 10, scale: 2, default: 0 })
-  total: number;
-
   @OneToOne(() => User, (user) => user.cart)
   @JoinColumn()
   user: User;
