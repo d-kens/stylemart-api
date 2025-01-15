@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CartItem } from "src/entities/cart-item.entity";
 import { Cart } from "src/entities/cart.entity";
 import { In, Repository } from "typeorm";
+import { UpdateCartItemDto } from "./dto/cart.dto";
 
 @Injectable()
 export class CartService {
@@ -15,10 +16,10 @@ export class CartService {
     private cartItemRepository: Repository<CartItem>,
   ) {}
 
-  async createCart(userId: string) {
+  async createCart(userId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ["cartItems", "cartItems.product"],
+      relations: ["cartItems", "cartItems.product", "cartItems.product.category"],
     });
 
     if (!cart) {
@@ -36,47 +37,36 @@ export class CartService {
     return await this.createCart(userId);
   }
 
-  async updateCart(
-    userId: string,
-    items: { productId: string; quantity: number }[],
-  ) {
-    const cart = await this.createCart(userId);
 
-    const productIds = items.map((item) => item.productId);
+  async updateCart(userId: string, items: UpdateCartItemDto[]): Promise<Cart> {
+    const cart = await this.createCart(userId); 
 
-    // Find existing cart items for the provided product IDs
-    const existingCartItems = await this.cartItemRepository.find({
-      where: {
-        product: { id: In(productIds) },
-        cart: { id: cart.id },
-      },
-      relations: ["product"],
-    });
+    for (const updateItem of items) {
+      const cartItem = await this.cartItemRepository.findOne({
+        where: { product: { id: updateItem.id }, cart: { id: cart.id } },
+        relations: ["product"], 
+      });
 
-    // create a Map for easy lookup of existing cart items by productId
-    const existingCartItemsMap = new Map(
-      existingCartItems.map((item) => [item.product.id, item]),
-    );
-
-    for (const { productId, quantity } of items) {
-      if (existingCartItemsMap.has(productId)) {
-        
-        const existingCartItem = existingCartItemsMap.get(productId);
-        existingCartItem.quantity = quantity;
-        await this.cartItemRepository.save(existingCartItem);
-        
-      } else {
-        
-        const cartItem = this.cartItemRepository.create({
-          product: { id: productId },
-          cart,
-          quantity: quantity,
-        });
-
+      if (cartItem) {
+        cartItem.quantity = updateItem.quantity;
         await this.cartItemRepository.save(cartItem);
+      } else {
+        const newCartItem = this.cartItemRepository.create({
+          product: { id: updateItem.id },
+          quantity: updateItem.quantity,
+          cart: cart,
+        });
+        await this.cartItemRepository.save(newCartItem);
+        this.logger.log(`Added new product with id ${updateItem.id} to the cart.`);
       }
     }
-    
-    return this.getCart(userId);
+
+    return await this.getCart(userId);
   }
 }
+
+
+  
+
+ 
+

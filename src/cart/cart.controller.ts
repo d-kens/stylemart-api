@@ -3,29 +3,48 @@ import { CartService } from "./cart.service";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { User } from "src/entities/user.entity";
 import { CurrentUser } from "src/auth/decorators/current-user.decorator";
-import { CartDto, UpdateCartDto } from "./dto/cart.dto";
+import { CartItemResponseDto, UpdateCartItemDto } from "./dto/cart.dto";
 
-@Controller("cart")
+@Controller("cart/items")
 export class CartController {
   constructor(private cartService: CartService) {}
 
+
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getCart(@CurrentUser() user: User): Promise<CartDto> {
+  async getCart(@CurrentUser() user: User): Promise<CartItemResponseDto[]> {
     const cart = await this.cartService.getCart(user.id);
-    return new CartDto(cart.cartItems);
+    const transformedCartItems: CartItemResponseDto[] = cart.cartItems.map(item => ({
+      id: item.product.id,
+      name: item.product.name,
+      imageUrl: item.product.imageUrl,
+      price: item.product.price,
+      quantity: item.quantity,
+    }))
+
+    return transformedCartItems;
   }
+
 
   @UseGuards(JwtAuthGuard)
   @Patch()
   async updateCart(
     @CurrentUser() user: User,
-    @Body() updateCartDto: UpdateCartDto,
-  ): Promise<CartDto> {
-    const cart = await this.cartService.updateCart(
-      user.id,
-      updateCartDto.items,
-    );
-    return new CartDto(cart.cartItems);
+    @Body() items: UpdateCartItemDto[],
+  ): Promise<CartItemResponseDto[]>{
+
+    const cart = await this.cartService.updateCart(user.id, items);
+    
+    const transformedCartItems: CartItemResponseDto[] = cart.cartItems.map(item => ({
+      id: item.product.id,
+      name: item.product.name,
+      imageUrl: item.product.imageUrl,
+      price: item.product.price,
+      quantity: item.quantity,
+    }))
+
+    return transformedCartItems;
   }
+
+  
 }
