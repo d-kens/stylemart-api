@@ -19,7 +19,7 @@ export class OrderItem {
   @Column("int")
   quantity: number;
 
-  @OneToOne(() => Product, (product) => product.orderItem)
+  @ManyToOne(() => Product, (product) => product.orderItems)
   product: Product;
 
   @ManyToOne(() => Order, (order) => order.orderItems)

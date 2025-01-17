@@ -20,7 +20,6 @@ export class CartItem {
   @ManyToOne(() => Cart, (cart) => cart.cartItems)
   cart: Cart;
 
-  @OneToOne(() => Product, (product) => product.cartItem)
-  @JoinColumn()
+  @ManyToOne(() => Product, (product) => product.cartItems)
   product: Product;
 }

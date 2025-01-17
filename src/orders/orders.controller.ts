@@ -1,28 +1,32 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { CurrentUser } from "src/auth/decorators/current-user.decorator";
 import { User } from "src/entities/user.entity";
+import { Order } from "src/entities/order.entity";
 
 @Controller("orders")
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+
+  
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAllOrders(@CurrentUser() user: User) {
-    return await this.ordersService.getAllOrders(user.id);
+  async findAll(@CurrentUser() user: User): Promise<Order[]> {
+    return this.ordersService.findAll(user.id);
   }
 
-  @Get(':id')
+  @Get(":orderId")
   @UseGuards(JwtAuthGuard)
-  async getOrderById(@Param('id') orderId: string) {
-    return await this.ordersService.getOrderById(orderId);
+  async findOne(@Param("orderId") orderId: string): Promise<Order[]> {
+    return this.ordersService.findAll(orderId);
   }
 
-  @Post()
+
+  @Post() 
   @UseGuards(JwtAuthGuard)
   async createOrder(@CurrentUser() user: User) {
-    return await this.ordersService.createOrder(user);
+    return await this.ordersService.createOrder(user.id);
   }
 }

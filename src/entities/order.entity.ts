@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { User } from "./user.entity";
 import { OrderItem } from "./order-item.entity";
+import { OrderStatus } from "src/enums/order-status.enum";
 
 @Entity("tbl_orders")
 export class Order {
@@ -17,6 +18,13 @@ export class Order {
 
   @Column("decimal", { precision: 10, scale: 2, default: 0 })
   total: number;
+
+  @Column({
+    type: "enum",
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
+  orderStatus: OrderStatus;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;

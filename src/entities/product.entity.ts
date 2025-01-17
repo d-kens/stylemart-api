@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToOne,
+  OneToMany,
 } from "typeorm";
 import { Category } from "./category.entity";
 import { OrderItem } from "./order-item.entity";
@@ -44,11 +45,11 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @OneToOne(() => OrderItem, (orderItem) => orderItem.product)
-  orderItem: OrderItem;
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
 
-  @OneToOne(() => CartItem, (cartItem) => cartItem.product)
-  cartItem: CartItem;
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  cartItems: CartItem[];
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
