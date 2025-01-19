@@ -95,14 +95,20 @@ export class OrdersService {
           quantity: cartItem.quantity,
           price: cartItem.product.price,
           order: savedOrder,
-      });
-      this.logger.log(`Order Item being created: ${JSON.stringify(orderItem)}`);
-      await queryRunner.manager.save(orderItem);
-      
+        });
+
+        this.logger.log(`Order Item being created: ${JSON.stringify(orderItem)}`);
+        await queryRunner.manager.save(orderItem);
+        
   
         const product = cartItem.product;
         product.stock -= cartItem.quantity;
         await queryRunner.manager.save(product);
+      }
+
+      // Delete the cart items from the database
+      for (const cartItem of cart.cartItems) {
+        await queryRunner.manager.delete("CartItem", cartItem.id);
       }
 
       // Clear the cart
