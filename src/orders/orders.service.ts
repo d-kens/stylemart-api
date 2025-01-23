@@ -121,7 +121,14 @@ export class OrdersService {
     } catch (error) {
       this.logger.error(`Error creating order: ${error.message}`);
       await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException("Failed to create order.");
+
+      if(error instanceof NotFoundException) {
+
+      } else if(error instanceof BadRequestException) {
+        throw new BadRequestException(error.message);
+      } else {
+        throw new InternalServerErrorException("Failed to create order.");
+      }
     } finally {
       await queryRunner.release();
     }

@@ -9,8 +9,6 @@ import { Order } from "src/entities/order.entity";
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-
-  
   @Get()
   @UseGuards(JwtAuthGuard)
   async findAll(@CurrentUser() user: User): Promise<Order[]> {

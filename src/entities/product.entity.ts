@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToOne,
   OneToMany,
 } from "typeorm";
 import { Category } from "./category.entity";

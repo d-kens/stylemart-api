@@ -2,10 +2,13 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
+import { HttpExceptionFilter } from "./filter/http-exception/http-exception.filter";
 
 async function bootstrap() {
   const logger = new Logger('HTTP');
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.use((req, res, next) => {
     logger.log(`Incoming ${req.method} request to ${req.url}`);
@@ -37,8 +40,6 @@ async function bootstrap() {
     allowedHeaders: ["content-type", "authorization"],
     credentials: true,
   });
-
-  await app.startAllMicroservices();
 
   app.use(cookieParser());
 
