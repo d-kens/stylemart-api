@@ -17,8 +17,8 @@ export class OrdersController {
 
   @Get(":orderId")
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param("orderId") orderId: string): Promise<Order[]> {
-    return this.ordersService.findAll(orderId);
+  async findOne(@Param("orderId") orderId: string): Promise<Order> {
+    return this.ordersService.findOne(orderId);
   }
 
 

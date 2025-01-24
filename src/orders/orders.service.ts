@@ -41,13 +41,13 @@ export class OrdersService {
 
       return orders;
     } catch (error) {
-      this.logger.error(`Error fetching orders for user ${userId}: ${error.message}`);
+      this.logger.error(`Error fetching orders for user ${userId}: ${error}`);
       throw new InternalServerErrorException("Failed to retrieve orders.");
     }
   }
 
 
-  async findOne(orderId: string) {
+  async findOne(orderId: string): Promise<Order> {
     try {
       const order = await this.orderRepository.findOne({
         where: { id: orderId },
@@ -94,6 +94,7 @@ export class OrdersService {
           product: { id: cartItem.product.id },
           quantity: cartItem.quantity,
           price: cartItem.product.price,
+          name: cartItem.product.name,
           order: savedOrder,
         });
 
