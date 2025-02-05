@@ -5,6 +5,6 @@ export class MobileMoney {
   @IsEnum(TransactionType)
   transactionType: TransactionType;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber('KE')
   phoneNumber: string;
 }
