@@ -23,26 +23,5 @@ export class PaymentGatewayController {
 
   @Post("stk-callback")
   @HttpCode(200) 
-  async callBack(@Body() paymentResponse: MpesaResponse, @Req() request: Request) {
-    this.logger.log('========= M-PESA CALLBACK START =========');
-    this.logger.log(`Received callback from IP: ${request.ip}`);
-    this.logger.log(`Headers: ${JSON.stringify(request.headers)}`);
-    this.logger.log(`Body: ${JSON.stringify(paymentResponse)}`);
-    
-    try {
-      const provider = this.paymentGatewayService.getProvider(Providers.MPESA) as MpesaService;
-      const result = await provider.handleCallback(paymentResponse);
-      
-      this.logger.log(`Callback processed successfully: ${JSON.stringify(result)}`);
-      this.logger.log('========= M-PESA CALLBACK END =========');
-      
-      return result;
-    } catch (error) {
-      this.logger.error(`Callback processing failed: ${error.message}`);
-      this.logger.error(error.stack);
-      this.logger.log('========= M-PESA CALLBACK END =========');
-      
-      return new MpesaCallbackResponse("0", "Success");
-    }
-  }
+  async callBack(@Body() paymentResponse: MpesaResponse, @Req() request: Request) {}
 }

@@ -32,13 +32,6 @@ export class PaymentGatewayService {
     return selectedProvider.initiatePayment(paymentRequest);
   }
 
-  getProvider(provider: Providers): PaymentProvider {
-    const selectedProvider = this.paymentProviders.get(provider);
-    if (!selectedProvider) {
-      throw new Error("Invalid payment provider selected.");
-    }
-    return selectedProvider;
-  }
 
   async findTransactionByRequestCode(requestCode: string): Promise<Transaction> {
     return this.transactionService.findByRequestCode(requestCode);
