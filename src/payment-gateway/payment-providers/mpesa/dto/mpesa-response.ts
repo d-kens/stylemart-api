@@ -1,3 +1,13 @@
+export interface MpesaAuthRes {
+  access_token: string;
+  expires_in: string;
+}
+
+
+
+
+
+
 export class MpesaResponse {
   Body: Body;
 }

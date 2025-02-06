@@ -13,7 +13,7 @@ import { Transaction } from "src/entities/transaction.entity";
 import { TransactionType } from "src/payment-gateway/enums/transaction-type";
 import { StkRequest } from "./dto/stk-request";
 import { StkResponse } from "./dto/stk-response";
-import { MpesaResponse } from "./dto/mpesa-response";
+import { MpesaAuthRes, MpesaResponse } from "./dto/mpesa-response";
 import { MpesaCallbackResponse } from "./dto/mpesa-callback-response";
 import { PaymentStatus } from "src/payment-gateway/enums/payment-status";
 
@@ -26,15 +26,17 @@ export class MpesaService implements PaymentProvider {
     private readonly transactionService: TransactionsService,
   ) {}
 
+
   async authenticate(): Promise<string> {
     const {
-      MPESA_AUTHENTICATION_URL,
+      MPESA_AUTHORIZATION_URL,
       MPESA_CONSUMER_KEY,
       MPESA_CONSUMER_SECRET,
     } = process.env;
 
+
     if (
-      !MPESA_AUTHENTICATION_URL ||
+      !MPESA_AUTHORIZATION_URL ||
       !MPESA_CONSUMER_KEY ||
       !MPESA_CONSUMER_SECRET
     ) {
@@ -42,9 +44,10 @@ export class MpesaService implements PaymentProvider {
       throw new Error("MPESA authentication configuration is invalid");
     }
 
+
     const { data } = await firstValueFrom(
       this.httpService
-        .get<any>(MPESA_AUTHENTICATION_URL, {
+        .get<MpesaAuthRes>(MPESA_AUTHORIZATION_URL, {
           auth: {
             username: MPESA_CONSUMER_KEY,
             password: MPESA_CONSUMER_SECRET,
@@ -61,14 +64,9 @@ export class MpesaService implements PaymentProvider {
         ),
     );
 
-    this.logger.log(
-      `MPESA Authentication successful, token acquired. Expires in: ${data.expires_in} seconds`,
-    );
-
-    this.logger.log("ACESS TOKEN: " + data.access_token);
-
     return data.access_token;
   }
+
 
   async initiatePayment(paymentRequest: PaymentRequest): Promise<Transaction> {
     if (paymentRequest.mobile.transactionType == TransactionType.STK) {

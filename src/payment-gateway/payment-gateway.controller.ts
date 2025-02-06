@@ -13,11 +13,7 @@ export class PaymentGatewayController {
 
   @Post("initiate-payment")
   async processPayment(@Body(ValidationPipe) paymentRequest: PaymentRequest) {
-    this.logger.log("Pay Pay Pay");
     this.logger.log(`Initiating payment for order: ${JSON.stringify(paymentRequest)}`);
-
-    // TODO: Include Daraja API  Env Variables
-    // TODO: Implement STK mpesa STK push
     return this.paymentGatewayService.initiatePayment(paymentRequest);
   }
 

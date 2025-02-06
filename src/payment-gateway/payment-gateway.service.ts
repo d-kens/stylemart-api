@@ -4,16 +4,12 @@ import { Providers } from "./enums/providers";
 import { PaymentProvider } from "./payment-providers/payment-provider.interface";
 import { MpesaService } from "./payment-providers/mpesa/mpesa.service";
 import { TransactionsService } from "./transactions/transactions.service";
-import { Transaction } from "../entities/transaction.entity";
 
 @Injectable()
 export class PaymentGatewayService {
   logger = new Logger(PaymentGatewayService.name);
 
-  private readonly paymentProviders: Map<Providers, PaymentProvider> = new Map<
-    Providers,
-    PaymentProvider
-  >();
+  private readonly paymentProviders: Map<Providers, PaymentProvider> = new Map<Providers,PaymentProvider>();
 
   constructor(
     private readonly mpesa: MpesaService,
@@ -30,14 +26,5 @@ export class PaymentGatewayService {
     }
 
     return selectedProvider.initiatePayment(paymentRequest);
-  }
-
-
-  async findTransactionByRequestCode(requestCode: string): Promise<Transaction> {
-    return this.transactionService.findByRequestCode(requestCode);
-  }
-
-  async updateTransaction(transaction: Transaction): Promise<Transaction> {
-    return this.transactionService.updateTransaction(transaction);
   }
 }
