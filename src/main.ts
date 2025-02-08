@@ -1,8 +1,9 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { BadRequestException, Logger, ValidationPipe } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
 import { HttpExceptionFilter } from "./filter/http-exception/http-exception.filter";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const logger = new Logger("HTTP");
@@ -31,9 +32,21 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  // Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle("Stylemart API")
+    .setDescription("API documentation for Stylemart platform")
+    .setVersion("1.0")
+    .addBearerAuth() // Adds JWT authentication
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api/docs", app, document);
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   logger.log(`🚀 Application is running on port ${port}`);
+  logger.log(`📄 Swagger Docs available at http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
