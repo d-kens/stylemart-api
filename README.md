@@ -1,6 +1,6 @@
 # E-Commerce API
 
-This is a robust and scalable e-commerce API built using **NestJS**, **TypeORM**, and **MySQL**, providing a complete backend solution for an online store. The API is designed to handle essential e-commerce functionalities, ensuring a seamless shopping experience for users.
+This is an e-commerce API built using **NestJS**, **TypeORM**, and **MySQL**, providing a complete backend solution for an online store. The API is designed to handle essential e-commerce functionalities, ensuring a seamless shopping experience for users.
 
 ## Features
 
