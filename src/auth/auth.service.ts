@@ -17,8 +17,8 @@ import { TokenService } from "src/token/token.service";
 import { TokenType } from "src/enums/toke-type.enum";
 import { ResetPasswordDto } from "src/dtos/reset-password.dto";
 import { hash } from "bcrypt";
-import { ChangepasswordDto } from "src/dtos/change-password.dto";
 import { MailerService } from "src/mailer/mailer.service";
+import { ChangePasswordDto } from "src/dtos/change-password.dto";
 
 @Injectable()
 export class AuthService {
@@ -120,7 +120,7 @@ export class AuthService {
     };
   }
 
-  async changePassword(changePwdData: ChangepasswordDto, user: User) {
+  async changePassword(changePwdData: ChangePasswordDto, user: User) {
     const { oldPassword, newPassword } = changePwdData;
 
     const isPasswordValid = await bcrypt.compare(oldPassword, user.password);

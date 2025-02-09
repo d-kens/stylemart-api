@@ -1,4 +1,4 @@
-import {
+import { 
   Body,
   Controller,
   Delete,
@@ -8,6 +8,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from "@nestjs/swagger";
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDto } from "../dtos/create-catgeoty.dto";
 import { Category } from "src/entities/category.entity";
@@ -15,47 +16,48 @@ import { Roles } from "src/auth/decorators/roles.decorator";
 import { RolesGuard } from "src/auth/guards/roles.guard";
 import { RoleEnum } from "src/enums/role.enum";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-import { ApiTags, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
-@ApiTags('Categories')
+@ApiTags("Categories")
 @Controller("categories")
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
-  @ApiResponse({ status: 200, description: 'Successfully retrieved all categories.' })
-  @ApiResponse({ status: 404, description: 'Categories not found.' })
+  @ApiOperation({ summary: "Retrieve all categories" })
+  @ApiResponse({ status: 200, description: "Returns a list of categories", type: [Category] })
   @Get()
   async findAll(): Promise<Category[]> {
     return await this.categoriesService.findAll();
   }
 
-  @ApiParam({ name: 'id', required: true, description: 'Unique identifier of the category.' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved the category.' })
-  @ApiResponse({ status: 404, description: 'Category not found.' })
+  @ApiOperation({ summary: "Retrieve a single category by ID" })
+  @ApiParam({ name: "id", type: String, description: "Category ID" })
+  @ApiResponse({ status: 200, description: "Returns the requested category", type: Category })
+  @ApiResponse({ status: 404, description: "Category not found" })
   @Get(":id")
   async findOne(@Param("id") categoryId: string): Promise<Category> {
     return await this.categoriesService.findOne(categoryId);
   }
 
+  @ApiOperation({ summary: "Create a new category (Admin only)" })
+  @ApiBody({ type: CreateCategoryDto, description: "Category data" })
+  @ApiResponse({ status: 201, description: "Category created successfully", type: Category })
+  @ApiResponse({ status: 400, description: "Invalid request data" })
   @Roles(RoleEnum.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
-  @ApiBody({ type: CreateCategoryDto }) 
-  @ApiResponse({ status: 201, description: 'Category created successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post()
-  async create(@Body(ValidationPipe) createCategoryDto: CreateCategoryDto) {
+  async create(@Body(ValidationPipe) createCategoryDto: CreateCategoryDto): Promise<Category> {
     return await this.categoriesService.create(createCategoryDto.name);
   }
 
+  @ApiOperation({ summary: "Delete a category by ID (Admin only)" })
+  @ApiParam({ name: "id", type: String, description: "Category ID" })
+  @ApiResponse({ status: 200, description: "Category deleted successfully" })
+  @ApiResponse({ status: 404, description: "Category not found" })
   @Roles(RoleEnum.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
-  @ApiParam({ name: 'id', required: true, description: 'Unique identifier of the category to delete.' })
-  @ApiResponse({ status: 200, description: 'Category deleted successfully.' })
-  @ApiResponse({ status: 404, description: 'Category not found.' })
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Delete(":id")
-  async delete(@Param("id") categoryId: string) {
-    return await this.categoriesService.delete(categoryId);
+  async delete(@Param("id") categoryId: string): Promise<{ message: string }> {
+    await this.categoriesService.delete(categoryId);
+    return { message: "Category deleted successfully" };
   }
 }
