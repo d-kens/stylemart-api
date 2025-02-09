@@ -1,14 +1,16 @@
 # E-Commerce API
 
+![E-Commerce API](doc.png)
+
 This is an e-commerce API built using **NestJS**, **TypeORM**, and **MySQL**, providing a complete backend solution for an online store. The API is designed to handle essential e-commerce functionalities, ensuring a seamless shopping experience for users.
 
 ## Features
 
-- **User Authentication & Authorization**  
+- **User Authentication & Authorization**   
   - Secure user registration and login using JWT authentication.  
   - Role-based access control for customers and administrators.  
 
-- **Product Management**  
+- **Product Management**   
   - Create, update, delete, and retrieve products with categories and pricing.  
   - Support for product inventory tracking and stock management.  
 
