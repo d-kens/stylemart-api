@@ -23,7 +23,6 @@ This is an e-commerce API built using **NestJS**, **TypeORM**, and **MySQL**, pr
 
 - **Database Management**  
   - **TypeORM** is used for database interactions with **MySQL**.  
-  - Supports migrations, relations, and optimized queries for performance.  
 
 ## Technologies Used
 
